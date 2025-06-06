@@ -13,8 +13,8 @@ const META_THEME_COLORS = {
 };
 
 export const metadata: Metadata = {
-  title: "Next Shadcn",
-  description: "Basic dashboard with Next.js and Shadcn",
+  title: "SSEV",
+  description: "Sistema de Solicitação de Exames Veterinários",
 };
 
 export const viewport: Viewport = {
@@ -43,7 +43,7 @@ export default async function RootLayout({
       </head>
       <body
         className={cn(
-          "bg-background overflow-hidden overscroll-none font-sans antialiased",
+          "bg-background overflow-hidden overscroll-none font-sans antialiased theme-blue",
           fontVariables
         )}
       >
