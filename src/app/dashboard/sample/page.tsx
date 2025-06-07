@@ -28,14 +28,14 @@ export default async function Page() {
           </Link>
         </div>
         <Separator />
-        {/* <Suspense
-          // key={key}
-          fallback={
-            <DataTableSkeleton columnCount={5} rowCount={8} filterCount={2} />
-          }
+        <Suspense
+        // key={key}
+        // fallback={
+        //   <DataTableSkeleton columnCount={2} rowCount={8} filterCount={2} />
+        // }
         >
-          <ProductListingPage />
-        </Suspense> */}
+          {/* <ProductListingPage /> */}
+        </Suspense>
       </div>
     </PageContainer>
   );
