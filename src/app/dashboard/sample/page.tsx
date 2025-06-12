@@ -6,12 +6,24 @@ import { cn } from "@/lib/utils";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { SampleDataTable } from "./data-table/sample-data-table";
+import { columns, Sample } from "./data-table/columns";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 
 export const metadata = {
   title: "Amostras",
 };
 
 export default async function Page() {
+  const data: Sample[] = [
+    {
+      id: "728ed52f",
+      name: "Teste",
+      createdAt: "",
+      updatedAt: "",
+    },
+  ];
+
   return (
     <PageContainer scrollable={false}>
       <div className="flex flex-1 flex-col space-y-4">
@@ -29,12 +41,12 @@ export default async function Page() {
         </div>
         <Separator />
         <Suspense
-        // key={key}
-        // fallback={
-        //   <DataTableSkeleton columnCount={2} rowCount={8} filterCount={2} />
-        // }
+          // key={key}
+          fallback={
+            <DataTableSkeleton columnCount={2} rowCount={8} filterCount={2} />
+          }
         >
-          {/* <ProductListingPage /> */}
+          <SampleDataTable columns={columns} data={data} />
         </Suspense>
       </div>
     </PageContainer>
