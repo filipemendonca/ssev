@@ -10,10 +10,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "./data-table-pagination";
+import { Meta } from "@/types";
 
 interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   table: TanstackTable<TData>;
   actionBar?: React.ReactNode;
+  meta: Meta;
 }
 
 export function DataTable<TData>({
@@ -67,7 +69,7 @@ export function DataTable<TData>({
                       colSpan={table.getAllColumns().length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      Sem resultados.
                     </TableCell>
                   </TableRow>
                 )}

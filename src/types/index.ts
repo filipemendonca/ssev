@@ -34,7 +34,7 @@ export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
 
-interface Meta {
+export interface Meta {
   currentPage: number;
   hasNextPage: boolean;
   limit: number;
@@ -45,4 +45,9 @@ export interface GenericResponse<T> {
   success: boolean;
   data: T;
   meta: Meta;
+}
+
+export interface PaginationOptions {
+  currentPage: number;
+  limit: number;
 }

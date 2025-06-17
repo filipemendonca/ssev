@@ -17,29 +17,30 @@ interface DataTablePaginationProps<TData> extends React.ComponentProps<"div"> {
   pageSizeOptions?: number[];
 }
 
-const renderTextOfAmountOfLines = <TData,>(table: Table<TData>) => {
-  if (table.getFilteredSelectedRowModel().rows.length === 0)
-    return <>Sem resultados</>;
-  if (table.getFilteredSelectedRowModel().rows.length === 1)
-    return <>{table.getFilteredRowModel().rows.length} linha total.</>;
-  if (table.getFilteredSelectedRowModel().rows.length === 1)
-    return <>{table.getFilteredRowModel().rows.length} linhas(s) total(is).</>;
-  if (table.getFilteredSelectedRowModel().rows.length > 0) {
-    return (
-      <>
-        {table.getFilteredSelectedRowModel().rows.length} de{" "}
-        {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
-      </>
-    );
-  }
-};
+// const renderTextOfAmountOfLines = <TData,>(table: Table<TData>) => {
+//   console.log(table);
+//   if (table.getFilteredSelectedRowModel().rows.length === 0)
+//     return <>Sem resultados</>;
+//   if (table.getFilteredSelectedRowModel().rows.length === 1)
+//     return <>{table.getFilteredRowModel().rows.length} linha total.</>;
+//   if (table.getFilteredSelectedRowModel().rows.length === 1)
+//     return <>{table.getFilteredRowModel().rows.length} linhas(s) total(is).</>;
+//   if (table.getFilteredSelectedRowModel().rows.length > 0) {
+//     return (
+//       <>
+//         {table.getFilteredSelectedRowModel().rows.length} de{" "}
+//         {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
+//       </>
+//     );
+//   }
+// };
 
 export function DataTablePagination<TData>({
   table,
   pageSizeOptions = [10, 20, 30, 40, 50],
   className,
   ...props
-}: DataTablePaginationProps<TData>) {
+}: Readonly<DataTablePaginationProps<TData>>) {
   return (
     <div
       className={cn(
@@ -49,7 +50,7 @@ export function DataTablePagination<TData>({
       {...props}
     >
       <div className="text-muted-foreground flex-1 text-sm whitespace-nowrap">
-        {renderTextOfAmountOfLines(table)}
+        {/* {renderTextOfAmountOfLines(table)} */}
       </div>
       <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
         <div className="flex items-center space-x-2">
