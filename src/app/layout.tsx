@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./theme.css";
 import { fontVariables } from "@/lib/font";
+import { ReactQueryProvider } from "@/providers/ReactQueryProvider";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -56,7 +57,7 @@ export default async function RootLayout({
         >
           <ActiveThemeProvider>
             <Toaster />
-            {children}
+            <ReactQueryProvider>{children}</ReactQueryProvider>
           </ActiveThemeProvider>
         </ThemeProvider>
       </body>

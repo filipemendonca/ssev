@@ -1,4 +1,4 @@
-import { Icons } from '@/components/icons';
+import { Icons } from "@/components/icons";
 
 export interface NavItem {
   title: string;
@@ -33,3 +33,16 @@ export interface FooterItem {
 export type MainNavItem = NavItemWithOptionalChildren;
 
 export type SidebarNavItem = NavItemWithChildren;
+
+interface Meta {
+  currentPage: number;
+  hasNextPage: boolean;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+export interface GenericResponse<T> {
+  success: boolean;
+  data: T;
+  meta: Meta;
+}

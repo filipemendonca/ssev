@@ -1,6 +1,6 @@
 // src/hooks/useApiQuery.ts
 
-import { fetcher } from "@/app/utils/fetcher";
+import { fetcher } from "@/utils/fetcher";
 import { useQuery, QueryKey, QueryFunction } from "@tanstack/react-query";
 /**
  * Hook para realizar consultas à API usando React Query.

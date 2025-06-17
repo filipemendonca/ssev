@@ -22,6 +22,8 @@ export async function fetcher<T = unknown>(
 
   const token = getAccessToken(ctx);
 
+  console.log(token);
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
     ...(options.headers || {}),

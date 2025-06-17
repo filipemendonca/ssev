@@ -65,7 +65,7 @@ export function SampleActionDialog({
         <DialogHeader className="text-left">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <div className="-mr-4 h-32 w-full overflow-y-auto py-1 pr-4">
+        <div className="-mr-4 h-20 w-full overflow-y-auto py-1 pr-4">
           <Form {...form}>
             <form
               id="user-form"

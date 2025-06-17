@@ -1,4 +1,4 @@
-import { fetcher } from "@/app/utils/fetcher";
+import { fetcher } from "@/utils/fetcher";
 import { useMutation } from "@tanstack/react-query";
 
 /**
