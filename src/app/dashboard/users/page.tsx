@@ -1,15 +1,59 @@
+"use client";
 import PageContainer from "@/components/layout/page-container";
+import { buttonVariants } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
+import { Separator } from "@/components/ui/separator";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import { GenericDataDataTable } from "@/components/ui/table/generic-data-table";
+import { useApiQuery } from "@/hooks/use-api-query";
+import { cn } from "@/lib/utils";
+import { GenericResponse, PaginationOptions } from "@/types";
+import { IconPlus } from "@tabler/icons-react";
+import Link from "next/link";
+import { Suspense, useState } from "react";
+import { columns, Users } from "./data-table/columns";
 
-export const metadata = {
-  title: "Dashboard: Users",
-};
+export default function Page() {
+  const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
+    {
+      currentPage: 1,
+      limit: 10,
+    }
+  );
 
-export default async function Page() {
+  const { data } = useApiQuery<GenericResponse<Users[]>>(
+    ["users", paginationOptions],
+    `/users?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
+  );
+
   return (
-    <PageContainer scrollable={true}>
-      <div className="flex h-full w-full items-center justify-center">
-        <h1 className="text-2xl font-bold">Users Page</h1>
-        <p className="mt-2 text-gray-600">This is the users page content.</p>
+    <PageContainer scrollable={false}>
+      <div className="flex flex-1 flex-col space-y-4">
+        <div className="flex items-start justify-between">
+          <Heading
+            title="Usuários"
+            description="Gerencie os usuários do sistema."
+          />
+          <Link
+            href="/dashboard/users/novo"
+            className={cn(buttonVariants(), "text-xs md:text-sm")}
+            onClick={() => {}}
+          >
+            <IconPlus className="mr-2 h-4 w-4" /> Novo
+          </Link>
+        </div>
+        <Separator />
+        <Suspense
+          fallback={
+            <DataTableSkeleton columnCount={3} rowCount={8} filterCount={2} />
+          }
+        >
+          <GenericDataDataTable
+            columns={columns}
+            item={data as GenericResponse<Users[]>}
+            setPaginationOptions={setPaginationOptions}
+          />
+        </Suspense>
       </div>
     </PageContainer>
   );

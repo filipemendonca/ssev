@@ -1,5 +1,6 @@
 "use client";
 
+import { DataTableRowActions } from "@/components/ui/table/data-table-row-actions";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -33,5 +34,10 @@ export const columns: ColumnDef<Exams>[] = [
       const date = new Date(getValue() as string);
       return format(date, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
     },
+  },
+  {
+    id: "actions",
+    header: "Ações",
+    cell: DataTableRowActions,
   },
 ];

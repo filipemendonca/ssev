@@ -39,6 +39,10 @@ export const navItems: NavItem[] = [
         title: "Exames",
         url: "/dashboard/exams",
       },
+      {
+        title: "Usuários",
+        url: "/dashboard/users",
+      },
     ],
   },
   // {
