@@ -1,3 +1,4 @@
+"use client";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
@@ -10,14 +11,21 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRouter } from "next/navigation";
 
-interface DataTableRowActionsProps<T> {
+interface DataTableRowActionsProps<T extends { id: string | number }> {
   row?: Row<T>;
+  path: string;
 }
 
-export function DataTableRowActions<T>({
+export function DataTableRowActions<T extends { id: string | number }>({
   row,
+  path,
 }: Readonly<DataTableRowActionsProps<T>>) {
+  const router = useRouter();
+
+  console.log(row?.original);
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -30,7 +38,10 @@ export function DataTableRowActions<T>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem onClick={() => {}} className="cursor-pointer">
+        <DropdownMenuItem
+          onClick={() => router.push(`${path}${row?.original.id}`)}
+          className="cursor-pointer"
+        >
           Editar
           <DropdownMenuShortcut>
             <IconEdit size={16} />

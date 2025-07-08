@@ -37,7 +37,6 @@ export default function Page() {
           <Link
             href="/dashboard/users/novo"
             className={cn(buttonVariants(), "text-xs md:text-sm")}
-            onClick={() => {}}
           >
             <IconPlus className="mr-2 h-4 w-4" /> Novo
           </Link>
