@@ -8,18 +8,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Users } from "./columns";
+import { InfectiousAgents } from "./columns";
 
 interface CellActionProps {
-  data: Users;
+  data: InfectiousAgents;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<CellActionProps> = ({}) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
-  const router = useRouter();
+  //const router = useRouter();
 
   const onConfirm = async () => {};
 
@@ -31,7 +31,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onConfirm={onConfirm}
         loading={loading}
         title="Tem certeza?"
-        description="Esta ação não pode ser desfeita. Você tem certeza que deseja remover este usuário?"
+        description="Esta ação não pode ser desfeita. Você tem certeza que deseja remover este agente infeccioso?"
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -42,7 +42,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/users/${data.id}`)}
+            //onClick={() => router.push(`/dashboard/sample/${data.id}`)}
             className="cursor-pointer"
           >
             <IconEdit className="mr-2 h-4 w-4" /> Editar

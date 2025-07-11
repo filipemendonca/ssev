@@ -1,20 +1,20 @@
 "use client";
 
-import { DataTableRowActions } from "@/components/ui/table/data-table-row-actions";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CellAction } from "./cell-actions";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Exams = {
+export type InfectiousAgents = {
   id: string;
   name: string;
   createdAt: string;
   updatedAt: string;
 };
 
-export const columns: ColumnDef<Exams>[] = [
+export const columns: ColumnDef<InfectiousAgents>[] = [
   {
     accessorKey: "name",
     header: "Nome",
@@ -38,6 +38,6 @@ export const columns: ColumnDef<Exams>[] = [
   {
     id: "actions",
     header: "Ações",
-    cell: DataTableRowActions,
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];
