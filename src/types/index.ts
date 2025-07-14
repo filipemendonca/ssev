@@ -45,6 +45,16 @@ export interface GenericResponse<T> {
   success: boolean;
   data: T;
   meta: Meta;
+  message: string;
+  error?: string;
+  statusCode?: number;
+}
+
+export interface ErrorResponse {
+  success: false;
+  statusCode: number;
+  message: string;
+  error?: string;
 }
 
 export interface PaginationOptions {

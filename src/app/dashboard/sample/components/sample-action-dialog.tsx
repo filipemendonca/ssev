@@ -16,10 +16,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { GenericResponse } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SaveAll } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Sample } from "../data-table/columns";
 
 const formSchema = z.object({
   name: z.string().min(1, "O campo nome é obrigatório"),
@@ -48,9 +51,15 @@ export function SampleActionDialog({
       : { name: "" },
   });
 
-  const onSubmit = () => {
-    //form.reset();
-    // deve ser implementado o envio dos dados
+  const { mutateAsync } = useApiMutation<GenericResponse<Sample>>(
+    "/sample",
+    "POST"
+  );
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    form.reset();
+    await mutateAsync(values as never);
+    onOpenChange(false);
   };
 
   return (

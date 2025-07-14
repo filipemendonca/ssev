@@ -9,19 +9,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 //import { useRouter } from "next/navigation";
+import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
+import { GenericResponse } from "@/types";
 import { useState } from "react";
 import { Sample } from "./columns";
 
 interface CellActionProps {
-  data: Sample;
+  model: Sample;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({}) => {
+export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
   //const router = useRouter();
 
-  const onConfirm = async () => {};
+  const { deleteItemAsync } = useApiMutationDelete<GenericResponse<Sample>>({
+    endpoint: `/sample/${model.id}`,
+    hasBody: false,
+  });
+
+  const onConfirm = async () => {
+    await deleteItemAsync(model.id as never);
+    setOpen(false);
+  };
 
   return (
     <>

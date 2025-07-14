@@ -22,7 +22,7 @@ export async function fetcher<T = unknown>(
 
   const token = getAccessToken(ctx);
 
-  console.log(token);
+  console.log(`Token: ${token}`);
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -35,13 +35,7 @@ export async function fetcher<T = unknown>(
   const res = await fetch(url, {
     ...options,
     headers,
-    cache: "no-store", // opcional, força sempre buscar dados atualizados
   });
-
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message ?? `Erro: ${res.status}`);
-  }
 
   return res.json();
 }

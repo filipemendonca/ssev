@@ -1,9 +1,10 @@
 import { fetcher } from "../utils/fetcher";
 
 export const api = {
-  get: <T = unknown>(url: string, ctx?: never) => fetcher<T>(url, {}, ctx),
-  post: <T = unknown>(url: string, body: never, ctx?: never) =>
-    fetcher<T>(
+  get: async <T = unknown>(url: string, ctx?: never) =>
+    await fetcher<T>(url, {}, ctx),
+  post: async <T = unknown>(url: string, body: never, ctx?: never) =>
+    await fetcher<T>(
       url,
       {
         method: "POST",
@@ -11,8 +12,8 @@ export const api = {
       },
       ctx
     ),
-  put: <T = unknown>(url: string, body: never, ctx?: never) =>
-    fetcher<T>(
+  put: async <T = unknown>(url: string, body: never, ctx?: never) =>
+    await fetcher<T>(
       url,
       {
         method: "PUT",
@@ -20,8 +21,8 @@ export const api = {
       },
       ctx
     ),
-  delete: <T = unknown>(url: string, ctx?: never) =>
-    fetcher<T>(
+  delete: async <T = unknown>(url: string, ctx?: never) =>
+    await fetcher<T>(
       url,
       {
         method: "DELETE",
