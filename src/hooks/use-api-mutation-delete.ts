@@ -14,6 +14,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 interface Props {
   endpoint: string;
   hasBody: boolean;
+  queryKeys?: unknown[];
   data?: never;
 }
 
@@ -32,6 +33,7 @@ type ApiMutationProps = Omit<Props, "data">;
 export function useApiMutationDelete<T = unknown>({
   endpoint,
   hasBody,
+  queryKeys = [],
 }: ApiMutationProps) {
   const queryClient = useQueryClient();
 
@@ -39,6 +41,8 @@ export function useApiMutationDelete<T = unknown>({
     mutationFn: () => handleDelete<T>({ endpoint, hasBody }),
     onSuccess: (data) => {
       const response = data as GenericResponse<T>;
+
+      queryClient.invalidateQueries({ queryKey: queryKeys });
 
       if (!response.success) {
         toastError({
@@ -52,7 +56,6 @@ export function useApiMutationDelete<T = unknown>({
         header: "Sucesso!",
         description: "Registro removido com sucesso!",
       });
-      queryClient.invalidateQueries({ queryKey: ["items"] });
     },
     onError: (error: Error) => {
       toastError({

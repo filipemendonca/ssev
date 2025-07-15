@@ -24,8 +24,6 @@ export function DataTableRowActions<T extends { id: string | number }>({
 }: Readonly<DataTableRowActionsProps<T>>) {
   const router = useRouter();
 
-  console.log(row?.original);
-
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>

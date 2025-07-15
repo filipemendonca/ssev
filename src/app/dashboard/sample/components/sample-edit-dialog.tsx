@@ -31,33 +31,30 @@ const formSchema = z.object({
 type SampleForm = z.infer<typeof formSchema>;
 
 interface SampleActionDialogProps {
-  currentSample?: unknown;
+  model: Sample;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function SampleActionDialog({
-  currentSample,
+export function SampleEditDialog({
+  model,
   open,
   onOpenChange,
 }: Readonly<SampleActionDialogProps>) {
-  const isEditMode = Boolean(currentSample);
-  const title = isEditMode ? "Editar Amostra" : "Criar Amostra";
+  const title = "Editar Amostra";
 
   const form = useForm<SampleForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: currentSample
-      ? { ...currentSample, name: "" }
-      : { name: "" },
+    defaultValues: model,
   });
 
-  const { mutateAsync } = useApiMutation<GenericResponse<Sample>>(
-    "/sample",
-    "POST"
-  );
+  const { mutateAsync } = useApiMutation<GenericResponse<Sample>>({
+    endpoint: `/sample/${model.id}`,
+    method: "PUT",
+    queryKeys: ["sample"],
+  });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    form.reset();
     await mutateAsync(values as never);
     onOpenChange(false);
   };
@@ -66,7 +63,6 @@ export function SampleActionDialog({
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        form.reset();
         onOpenChange(state);
       }}
     >

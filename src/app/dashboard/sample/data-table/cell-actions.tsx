@@ -13,6 +13,7 @@ import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
 import { GenericResponse } from "@/types";
 import { useState } from "react";
 import { Sample } from "./columns";
+import { SampleEditDialog } from "../components/sample-edit-dialog";
 
 interface CellActionProps {
   model: Sample;
@@ -21,11 +22,14 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [currentSample, setCurrentSample] = useState<Sample>(model);
   //const router = useRouter();
 
   const { deleteItemAsync } = useApiMutationDelete<GenericResponse<Sample>>({
     endpoint: `/sample/${model.id}`,
     hasBody: false,
+    queryKeys: ["sample"],
   });
 
   const onConfirm = async () => {
@@ -33,8 +37,18 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
     setOpen(false);
   };
 
+  const onEdit = async () => {
+    setOpenDialog(true);
+    setCurrentSample(model);
+  };
+
   return (
     <>
+      <SampleEditDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        model={currentSample}
+      />
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -51,10 +65,7 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            //onClick={() => router.push(`/dashboard/sample/${data.id}`)}
-            className="cursor-pointer"
-          >
+          <DropdownMenuItem onClick={() => onEdit()} className="cursor-pointer">
             <IconEdit className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
           <DropdownMenuItem

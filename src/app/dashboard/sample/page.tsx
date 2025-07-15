@@ -11,11 +11,13 @@ import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
-import { SampleActionDialog } from "./components/sample-action-dialog";
+import { SampleCreateDialog } from "./components/sample-create-dialog";
 import { columns, Sample } from "./data-table/columns";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
+  // const [dataFiltered, setDataFiltered] = useState<GenericResponse<Sample[]>>();
+
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
       currentPage: 1,
@@ -27,6 +29,10 @@ export default function Page() {
     ["sample", paginationOptions],
     `/sample?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
   );
+
+  // useEffect(() => {
+  //   setDataFiltered(data);
+  // }, [data]);
 
   return (
     <PageContainer scrollable={false}>
@@ -41,10 +47,11 @@ export default function Page() {
             className={cn(buttonVariants(), "text-xs md:text-sm")}
             onClick={() => setOpenDialog(true)}
           >
-            <IconPlus className="mr-2 h-4 w-4" /> Novo
+            <IconPlus /> Novo
           </Link>
         </div>
         <Separator />
+
         <Suspense
           fallback={
             <DataTableSkeleton columnCount={3} rowCount={8} filterCount={2} />
@@ -57,7 +64,7 @@ export default function Page() {
           />
         </Suspense>
       </div>
-      <SampleActionDialog open={openDialog} onOpenChange={setOpenDialog} />
+      <SampleCreateDialog open={openDialog} onOpenChange={setOpenDialog} />
     </PageContainer>
   );
 }
