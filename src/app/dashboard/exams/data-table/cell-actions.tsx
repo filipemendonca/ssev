@@ -8,23 +8,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-//import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Exams } from "./columns";
+import { GenericResponse } from "@/types";
+import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
+import { ExamsEditDialog } from "../components/exams-edit-dialog";
 
 interface CellActionProps {
-  data: Exams;
+  model: Exams;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({}) => {
+export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
-  //const router = useRouter();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [currentSample, setCurrentSample] = useState<Exams>(model);
 
-  const onConfirm = async () => {};
+  const { deleteItemAsync } = useApiMutationDelete<GenericResponse<Exams>>({
+    endpoint: `/exams/${model.id}`,
+    hasBody: false,
+    queryKeys: ["exams"],
+  });
+
+  const onConfirm = async () => {
+    await deleteItemAsync(model.id as never);
+    setOpen(false);
+  };
+
+  const onEdit = async () => {
+    setOpenDialog(true);
+    setCurrentSample(model);
+  };
 
   return (
     <>
+      <ExamsEditDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        model={currentSample}
+      />
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -41,10 +63,7 @@ export const CellAction: React.FC<CellActionProps> = ({}) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            //onClick={() => router.push(`/dashboard/sample/${data.id}`)}
-            className="cursor-pointer"
-          >
+          <DropdownMenuItem onClick={() => onEdit()} className="cursor-pointer">
             <IconEdit className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
           <DropdownMenuItem

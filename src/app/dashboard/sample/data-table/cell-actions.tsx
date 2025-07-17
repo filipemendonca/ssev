@@ -8,7 +8,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-//import { useRouter } from "next/navigation";
 import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
 import { GenericResponse } from "@/types";
 import { useState } from "react";
@@ -24,7 +23,6 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const [open, setOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [currentSample, setCurrentSample] = useState<Sample>(model);
-  //const router = useRouter();
 
   const { deleteItemAsync } = useApiMutationDelete<GenericResponse<Sample>>({
     endpoint: `/sample/${model.id}`,

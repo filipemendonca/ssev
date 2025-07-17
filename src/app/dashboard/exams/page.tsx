@@ -11,8 +11,8 @@ import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
-import { ExamsActionDialog } from "./components/exams-action-dialog";
 import { columns, Exams } from "./data-table/columns";
+import { ExamsCreateDialog } from "./components/exams-create-dialog";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -53,7 +53,7 @@ export default function Page() {
           />
         </Suspense>
       </div>
-      <ExamsActionDialog open={openDialog} onOpenChange={setOpenDialog} />
+      <ExamsCreateDialog open={openDialog} onOpenChange={setOpenDialog} />
     </PageContainer>
   );
 }

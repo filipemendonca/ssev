@@ -16,48 +16,53 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { GenericResponse } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SaveAll } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Exams } from "../data-table/columns";
 
 const formSchema = z.object({
   name: z.string().min(1, "O campo nome é obrigatório"),
 });
 
-type ExamsForm = z.infer<typeof formSchema>;
+type SampleForm = z.infer<typeof formSchema>;
 
 interface ExamsActionDialogProps {
-  currentSample?: unknown;
+  model: Exams;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function ExamsActionDialog({
-  currentSample,
+export function ExamsEditDialog({
+  model,
   open,
   onOpenChange,
 }: Readonly<ExamsActionDialogProps>) {
-  const isEditMode = Boolean(currentSample);
-  const title = isEditMode ? "Editar Exame" : "Criar Exame";
+  const title = "Editar Exame";
 
-  const form = useForm<ExamsForm>({
+  const form = useForm<SampleForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: currentSample
-      ? { ...currentSample, name: "" }
-      : { name: "" },
+    defaultValues: model,
   });
 
-  const onSubmit = () => {
-    //form.reset();
-    // deve ser implementado o envio dos dados
+  const { mutateAsync } = useApiMutation<GenericResponse<Exams>>({
+    endpoint: `/exams/${model.id}`,
+    method: "PUT",
+    queryKeys: ["exams"],
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await mutateAsync(values as never);
+    onOpenChange(false);
   };
 
   return (
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        form.reset();
         onOpenChange(state);
       }}
     >
@@ -65,7 +70,7 @@ export function ExamsActionDialog({
         <DialogHeader className="text-left">
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
-        <div className="-mr-4 h-32 w-full overflow-y-auto py-1 pr-4">
+        <div className="-mr-4 h-20 w-full overflow-y-auto py-1 pr-4">
           <Form {...form}>
             <form
               id="user-form"
@@ -82,7 +87,7 @@ export function ExamsActionDialog({
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Nome do exame"
+                        placeholder="Nome da amostra"
                         className="col-span-4"
                         autoComplete="off"
                         {...field}

@@ -38,6 +38,6 @@ export const columns: ColumnDef<Exams>[] = [
   {
     id: "actions",
     header: "Ações",
-    cell: ({ row }) => <CellAction data={row.original} />,
+    cell: ({ row }) => <CellAction model={row.original} />,
   },
 ];
