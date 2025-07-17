@@ -8,23 +8,47 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-//import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { InfectiousAgents } from "./columns";
+import { GenericResponse } from "@/types";
+import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
+import { InfectiousAgentsEditDialog } from "../components/infectious-agents-edit-dialog copy";
 
 interface CellActionProps {
-  data: InfectiousAgents;
+  model: InfectiousAgents;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({}) => {
+export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
-  //const router = useRouter();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [currentSample, setCurrentSample] = useState<InfectiousAgents>(model);
 
-  const onConfirm = async () => {};
+  const { deleteItemAsync } = useApiMutationDelete<
+    GenericResponse<InfectiousAgents>
+  >({
+    endpoint: `/infectious-agents/${model.id}`,
+    hasBody: false,
+    queryKeys: ["infectious-agents"],
+  });
+
+  const onConfirm = async () => {
+    await deleteItemAsync(model.id as never);
+    setOpen(false);
+  };
+
+  const onEdit = async () => {
+    setOpenDialog(true);
+    setCurrentSample(model);
+  };
 
   return (
     <>
+      <InfectiousAgentsEditDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        model={currentSample}
+      />
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -41,10 +65,7 @@ export const CellAction: React.FC<CellActionProps> = ({}) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            //onClick={() => router.push(`/dashboard/sample/${data.id}`)}
-            className="cursor-pointer"
-          >
+          <DropdownMenuItem onClick={() => onEdit()} className="cursor-pointer">
             <IconEdit className="mr-2 h-4 w-4" /> Editar
           </DropdownMenuItem>
           <DropdownMenuItem

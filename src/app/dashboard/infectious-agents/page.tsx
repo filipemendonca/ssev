@@ -11,8 +11,8 @@ import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
-import { InfectiousAgentsActionDialog } from "./components/infectious-agents-action-dialog";
 import { columns, InfectiousAgents } from "./data-table/columns";
+import { InfectiousAgentsCreateDialog } from "./components/infectious-agents-create-dialog";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
@@ -57,7 +57,7 @@ export default function Page() {
           />
         </Suspense>
       </div>
-      <InfectiousAgentsActionDialog
+      <InfectiousAgentsCreateDialog
         open={openDialog}
         onOpenChange={setOpenDialog}
       />

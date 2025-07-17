@@ -20,6 +20,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SaveAll } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { InfectiousAgents } from "../data-table/columns";
+import { GenericResponse } from "@/types";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 
 const formSchema = z.object({
   name: z.string().min(1, "O campo nome é obrigatório"),
@@ -27,32 +30,34 @@ const formSchema = z.object({
 
 type InfectiousAgentsForm = z.infer<typeof formSchema>;
 
-interface InfectiousAgentsActionDialogProps {
-  currentSample?: unknown;
+interface InfectiousAgentsEditDialogProps {
+  model: InfectiousAgents;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export function InfectiousAgentsActionDialog({
-  currentSample,
+export function InfectiousAgentsEditDialog({
+  model,
   open,
   onOpenChange,
-}: Readonly<InfectiousAgentsActionDialogProps>) {
-  const isEditMode = Boolean(currentSample);
-  const title = isEditMode
-    ? "Editar Agente Infeccioso"
-    : "Criar Agente Infeccioso";
+}: Readonly<InfectiousAgentsEditDialogProps>) {
+  const title = "Editar Agente Infeccioso";
 
   const form = useForm<InfectiousAgentsForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: currentSample
-      ? { ...currentSample, name: "" }
-      : { name: "" },
+    defaultValues: model,
   });
 
-  const onSubmit = () => {
-    //form.reset();
-    // deve ser implementado o envio dos dados
+  const { mutateAsync } = useApiMutation<GenericResponse<InfectiousAgents>>({
+    endpoint: `/infectious-agents/${model.id}`,
+    method: "POST",
+    queryKeys: ["infectious-agents"],
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await mutateAsync(values as never);
+    form.reset();
+    onOpenChange(false);
   };
 
   return (
