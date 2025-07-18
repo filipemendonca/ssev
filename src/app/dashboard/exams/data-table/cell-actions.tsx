@@ -27,7 +27,9 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const { deleteItemAsync } = useApiMutationDelete<GenericResponse<Exams>>({
     endpoint: `/exams/${model.id}`,
     hasBody: false,
-    queryKeys: ["exams"],
+    queryKeys: ["examsDelete"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["exams"],
   });
 
   const onConfirm = async () => {

@@ -12,7 +12,7 @@ import { useState } from "react";
 import { InfectiousAgents } from "./columns";
 import { GenericResponse } from "@/types";
 import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
-import { InfectiousAgentsEditDialog } from "../components/infectious-agents-edit-dialog copy";
+import { InfectiousAgentsEditDialog } from "../components/infectious-agents-edit-dialog";
 
 interface CellActionProps {
   model: InfectiousAgents;
@@ -29,7 +29,9 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   >({
     endpoint: `/infectious-agents/${model.id}`,
     hasBody: false,
-    queryKeys: ["infectious-agents"],
+    queryKeys: ["infectious-agents-delete"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["infectious-agents"],
   });
 
   const onConfirm = async () => {

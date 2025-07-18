@@ -51,7 +51,9 @@ export function SampleEditDialog({
   const { mutateAsync } = useApiMutation<GenericResponse<Sample>>({
     endpoint: `/sample/${model.id}`,
     method: "PUT",
-    queryKeys: ["sample"],
+    queryKeys: ["sampleEdit"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["sample"],
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -102,7 +104,7 @@ export function SampleEditDialog({
         </div>
         <DialogFooter>
           <Button type="submit" form="user-form" className="cursor-pointer">
-            <SaveAll className="mr-2 h-4 w-4" />
+            <SaveAll />
             Salvar
           </Button>
         </DialogFooter>

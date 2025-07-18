@@ -49,7 +49,9 @@ export function InfectiousAgentsCreateDialog({
   const { mutateAsync } = useApiMutation<GenericResponse<InfectiousAgents>>({
     endpoint: "/infectious-agents",
     method: "POST",
-    queryKeys: ["infectious-agents"],
+    queryKeys: ["infectious-agents-create"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["infectious-agents"],
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -102,7 +104,7 @@ export function InfectiousAgentsCreateDialog({
         </div>
         <DialogFooter>
           <Button type="submit" form="user-form" className="cursor-pointer">
-            <SaveAll className="mr-2 h-4 w-4" />
+            <SaveAll />
             Salvar
           </Button>
         </DialogFooter>

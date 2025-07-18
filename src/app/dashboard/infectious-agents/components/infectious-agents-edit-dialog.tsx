@@ -50,8 +50,10 @@ export function InfectiousAgentsEditDialog({
 
   const { mutateAsync } = useApiMutation<GenericResponse<InfectiousAgents>>({
     endpoint: `/infectious-agents/${model.id}`,
-    method: "POST",
-    queryKeys: ["infectious-agents"],
+    method: "PUT",
+    queryKeys: ["infectious-agents-edit"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["infectious-agents"],
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -104,7 +106,7 @@ export function InfectiousAgentsEditDialog({
         </div>
         <DialogFooter>
           <Button type="submit" form="user-form" className="cursor-pointer">
-            <SaveAll className="mr-2 h-4 w-4" />
+            <SaveAll />
             Salvar
           </Button>
         </DialogFooter>

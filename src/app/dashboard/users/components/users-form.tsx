@@ -18,10 +18,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 import { cn } from "@/lib/utils";
+import { GenericResponse } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { IconArrowLeft, IconPlus } from "@tabler/icons-react";
+import { IconArrowLeft } from "@tabler/icons-react";
+import { SaveAll } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Users } from "../data-table/columns";
@@ -49,19 +53,23 @@ const formSchema = z.object({
 });
 
 interface UsersFormProps {
-  initialData: Users | null;
+  initialData: Users | undefined;
   pageTitle: string;
+  isEdit: boolean;
 }
 
 export default function UsersForm({
   initialData,
   pageTitle,
+  isEdit,
 }: Readonly<UsersFormProps>) {
+  const route = useRouter();
+
   const defaultValues = {
     name: initialData?.name ?? "",
     username: initialData?.username ?? "",
     email: initialData?.email ?? "",
-    isActive: initialData?.isActive || true,
+    isActive: initialData?.isActive ?? true,
     role: initialData?.role ?? "",
   };
 
@@ -70,9 +78,35 @@ export default function UsersForm({
     values: defaultValues,
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Form submission logic would be implemented here
-    console.log(values);
+  const { mutateAsync: createUserAsync } = useApiMutation<
+    GenericResponse<Users>
+  >({
+    endpoint: "/users",
+    method: "POST",
+    queryKeys: ["createUser"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["users"],
+  });
+
+  const { mutateAsync: editUserAsync } = useApiMutation<GenericResponse<Users>>(
+    {
+      endpoint: `/users/${initialData?.id}`,
+      method: "PUT",
+      queryKeys: ["editUser"],
+      invalidateQueries: true,
+      invalidateQueryKeys: ["users"],
+    }
+  );
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isEdit) {
+      await editUserAsync(values as never);
+    } else {
+      await createUserAsync(values as never);
+    }
+    form.reset();
+
+    route.push("/dashboard/users");
   }
 
   return (
@@ -156,7 +190,7 @@ export default function UsersForm({
                     <FormLabel>Categoria</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
-                      value={field.value[field.value.length]}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -186,7 +220,7 @@ export default function UsersForm({
               <IconArrowLeft /> Voltar
             </Link>
             <Button type="submit" className="cursor-pointer">
-              <IconPlus />
+              <SaveAll />
               Salvar
             </Button>
           </form>

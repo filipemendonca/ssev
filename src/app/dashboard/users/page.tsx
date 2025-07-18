@@ -35,7 +35,7 @@ export default function Page() {
             description="Gerencie os usuários do sistema."
           />
           <Link
-            href="/dashboard/users/novo"
+            href="/dashboard/users/create"
             className={cn(buttonVariants(), "text-xs md:text-sm")}
           >
             <IconPlus className="mr-2 h-4 w-4" /> Novo

@@ -16,6 +16,8 @@ interface Props {
   hasBody: boolean;
   queryKeys?: unknown[];
   data?: never;
+  invalidateQueries?: boolean;
+  invalidateQueryKeys?: unknown[];
 }
 
 async function handleDelete<T>({ endpoint, hasBody, data }: Props) {
@@ -34,15 +36,19 @@ export function useApiMutationDelete<T = unknown>({
   endpoint,
   hasBody,
   queryKeys = [],
+  invalidateQueries = false,
+  invalidateQueryKeys = [],
 }: ApiMutationProps) {
   const queryClient = useQueryClient();
 
   const { mutateAsync: deleteItemAsync, data } = useMutation<T, Error, never>({
+    mutationKey: queryKeys,
     mutationFn: () => handleDelete<T>({ endpoint, hasBody }),
     onSuccess: (data) => {
       const response = data as GenericResponse<T>;
 
-      queryClient.invalidateQueries({ queryKey: queryKeys });
+      if (invalidateQueries)
+        queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
 
       if (!response.success) {
         toastError({

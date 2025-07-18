@@ -49,7 +49,9 @@ export function ExamsCreateDialog({
   const { mutateAsync } = useApiMutation<GenericResponse<Exams>>({
     endpoint: "/exams",
     method: "POST",
-    queryKeys: ["exams"],
+    queryKeys: ["examsCreate"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["exams"],
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -102,7 +104,7 @@ export function ExamsCreateDialog({
         </div>
         <DialogFooter>
           <Button type="submit" form="user-form" className="cursor-pointer">
-            <SaveAll className="mr-2 h-4 w-4" />
+            <SaveAll />
             Salvar
           </Button>
         </DialogFooter>

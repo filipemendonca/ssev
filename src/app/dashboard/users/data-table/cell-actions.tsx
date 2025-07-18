@@ -11,17 +11,30 @@ import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Users } from "./columns";
+import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
+import { GenericResponse } from "@/types";
 
 interface CellActionProps {
-  data: Users;
+  model: Users;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const onConfirm = async () => {};
+  const { deleteItemAsync } = useApiMutationDelete<GenericResponse<Users>>({
+    endpoint: `/users/${model.id}`,
+    hasBody: false,
+    queryKeys: ["deleteUser"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["users"],
+  });
+
+  const onConfirm = async () => {
+    await deleteItemAsync(model.id as never);
+    setOpen(false);
+  };
 
   return (
     <>
@@ -42,7 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/users/${data.id}`)}
+            onClick={() => router.push(`/dashboard/users/${model.id}`)}
             className="cursor-pointer"
           >
             <IconEdit className="mr-2 h-4 w-4" /> Editar

@@ -19,6 +19,8 @@ interface UseApiMutationOptions {
   showSuccessToast?: boolean;
   showErrorToast?: boolean;
   queryKeys?: unknown[];
+  invalidateQueries?: boolean;
+  invalidateQueryKeys?: unknown[];
 }
 
 export function useApiMutation<T = unknown>({
@@ -27,10 +29,13 @@ export function useApiMutation<T = unknown>({
   showSuccessToast = true,
   showErrorToast = true,
   queryKeys = [],
+  invalidateQueries = false,
+  invalidateQueryKeys = [],
 }: UseApiMutationOptions) {
   const queryClient = useQueryClient();
 
   return useMutation<T, Error, never>({
+    mutationKey: queryKeys,
     mutationFn: async (data: never) => {
       return fetcher<T>(endpoint, {
         method,
@@ -41,7 +46,8 @@ export function useApiMutation<T = unknown>({
     onSuccess: (data) => {
       const res = data as GenericResponse<T>;
 
-      queryClient.invalidateQueries({ queryKey: queryKeys });
+      if (invalidateQueries)
+        queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
 
       if (showErrorToast && !res.success) {
         toastError({
