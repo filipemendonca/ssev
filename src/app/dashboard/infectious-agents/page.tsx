@@ -10,12 +10,14 @@ import { cn } from "@/lib/utils";
 import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { columns, InfectiousAgents } from "./data-table/columns";
 import { InfectiousAgentsCreateDialog } from "./components/infectious-agents-create-dialog";
+import { InfectiousAgentsFilter } from "./components/infectious-agents-filter";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
+  const [search, setSearch] = useState({ name: "" });
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
       currentPage: 1,
@@ -23,10 +25,16 @@ export default function Page() {
     }
   );
 
-  const { data } = useApiQuery<GenericResponse<InfectiousAgents[]>>(
+  const { data, refetch } = useApiQuery<GenericResponse<InfectiousAgents[]>>(
     ["infectious-agents", paginationOptions],
-    `/infectious-agents?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
+    `/infectious-agents?limit=${paginationOptions.limit}&currentPage=${
+      paginationOptions.currentPage
+    }${search.name !== "" ? `&name=${search.name}` : ""}`
   );
+
+  useEffect(() => {
+    if (search.name !== "") refetch();
+  }, [refetch, search]);
 
   return (
     <PageContainer scrollable={false}>
@@ -44,6 +52,8 @@ export default function Page() {
             <IconPlus className="mr-2 h-4 w-4" /> Novo
           </Link>
         </div>
+        <Separator />
+        <InfectiousAgentsFilter setSearch={setSearch} />
         <Separator />
         <Suspense
           fallback={

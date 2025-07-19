@@ -18,14 +18,14 @@ const formSchema = z.object({
   name: z.string(),
 });
 
-type SampleForm = z.infer<typeof formSchema>;
+type ExamsForm = z.infer<typeof formSchema>;
 
-interface SampleActionDialogProps {
+interface ExamsActionDialogProps {
   setSearch: Dispatch<SetStateAction<{ name: string }>>;
 }
 
-export function SampleFilter({ setSearch }: Readonly<SampleActionDialogProps>) {
-  const form = useForm<SampleForm>({
+export function ExamsFilter({ setSearch }: Readonly<ExamsActionDialogProps>) {
+  const form = useForm<ExamsForm>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "" },
   });

@@ -10,13 +10,14 @@ import { cn } from "@/lib/utils";
 import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { SampleCreateDialog } from "./components/sample-create-dialog";
+import { SampleFilter } from "./components/sample-filter";
 import { columns, Sample } from "./data-table/columns";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
-  // const [dataFiltered, setDataFiltered] = useState<GenericResponse<Sample[]>>();
+  const [search, setSearch] = useState({ name: "" });
 
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
@@ -25,14 +26,16 @@ export default function Page() {
     }
   );
 
-  const { data } = useApiQuery<GenericResponse<Sample[]>>(
+  const { data, refetch } = useApiQuery<GenericResponse<Sample[]>>(
     ["sample", paginationOptions],
-    `/sample?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
+    `/sample?limit=${paginationOptions.limit}&currentPage=${
+      paginationOptions.currentPage
+    }${search.name !== "" ? `&name=${search.name}` : ""}`
   );
 
-  // useEffect(() => {
-  //   setDataFiltered(data);
-  // }, [data]);
+  useEffect(() => {
+    if (search.name !== "") refetch();
+  }, [refetch, search]);
 
   return (
     <PageContainer scrollable={false}>
@@ -50,6 +53,10 @@ export default function Page() {
             <IconPlus /> Novo
           </Link>
         </div>
+        <Separator />
+
+        <SampleFilter setSearch={setSearch} />
+
         <Separator />
 
         <Suspense

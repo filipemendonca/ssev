@@ -13,12 +13,14 @@ import { useQuery, QueryKey, QueryFunction } from "@tanstack/react-query";
 export function useApiQuery<T = unknown>(
   key: QueryKey,
   endpoint: string,
-  options?: RequestInit
+  options?: RequestInit,
+  enabled: boolean = true
 ) {
   const queryFn: QueryFunction<T> = () => fetcher<T>(endpoint, options);
 
   return useQuery<T>({
     queryKey: key,
     queryFn,
+    enabled,
   });
 }

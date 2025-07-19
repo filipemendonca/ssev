@@ -10,22 +10,30 @@ import { cn } from "@/lib/utils";
 import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { columns, Exams } from "./data-table/columns";
 import { ExamsCreateDialog } from "./components/exams-create-dialog";
+import { ExamsFilter } from "./components/exams-filter";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
+  const [search, setSearch] = useState({ name: "" });
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
       currentPage: 1,
       limit: 10,
     }
   );
-  const { data } = useApiQuery<GenericResponse<Exams[]>>(
+  const { data, refetch } = useApiQuery<GenericResponse<Exams[]>>(
     ["exams", paginationOptions],
-    `/exams?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
+    `/exams?limit=${paginationOptions.limit}&currentPage=${
+      paginationOptions.currentPage
+    }${search.name !== "" ? `&name=${search.name}` : ""}`
   );
+
+  useEffect(() => {
+    if (search.name !== "") refetch();
+  }, [refetch, search]);
 
   return (
     <PageContainer scrollable={false}>
@@ -40,6 +48,10 @@ export default function Page() {
             <IconPlus className="mr-2 h-4 w-4" /> Novo
           </Link>
         </div>
+        <Separator />
+
+        <ExamsFilter setSearch={setSearch} />
+
         <Separator />
         <Suspense
           fallback={

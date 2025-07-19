@@ -18,14 +18,16 @@ const formSchema = z.object({
   name: z.string(),
 });
 
-type SampleForm = z.infer<typeof formSchema>;
+type InfectiousAgentsForm = z.infer<typeof formSchema>;
 
-interface SampleActionDialogProps {
+interface InfectiousAgentsActionDialogProps {
   setSearch: Dispatch<SetStateAction<{ name: string }>>;
 }
 
-export function SampleFilter({ setSearch }: Readonly<SampleActionDialogProps>) {
-  const form = useForm<SampleForm>({
+export function InfectiousAgentsFilter({
+  setSearch,
+}: Readonly<InfectiousAgentsActionDialogProps>) {
+  const form = useForm<InfectiousAgentsForm>({
     resolver: zodResolver(formSchema),
     defaultValues: { name: "" },
   });
