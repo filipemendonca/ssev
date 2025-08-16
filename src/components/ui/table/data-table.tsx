@@ -16,13 +16,17 @@ interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   table: TanstackTable<TData>;
   actionBar?: React.ReactNode;
   meta: Meta;
+  isClicable?: boolean;
 }
 
 export function DataTable<TData>({
   table,
   actionBar,
   children,
+  isClicable = false,
 }: Readonly<DataTableProps<TData>>) {
+  const cursorPointerStyle = "cursor-pointer hover:bg-muted";
+
   return (
     <div className="flex flex-1 flex-col space-y-4">
       {children}
@@ -52,6 +56,7 @@ export function DataTable<TData>({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
+                      className={isClicable ? cursorPointerStyle : undefined}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
