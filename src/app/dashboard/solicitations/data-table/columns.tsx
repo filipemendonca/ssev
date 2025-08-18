@@ -8,7 +8,7 @@ import {
   BLOOD_COLLECTION_TUBE_COLOR,
   ExamResultType,
   SolicitationStatus,
-} from "@/types";
+} from "../types/types";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -17,7 +17,7 @@ export type Solicitations = {
   tutor: string;
   patient: string;
   gender: string;
-  age: number;
+  age: string;
   doctor: string;
   specie: string;
   hospitalVet: string;
@@ -48,14 +48,6 @@ export const columns: ColumnDef<Solicitations>[] = [
   {
     accessorKey: "doctor",
     header: "Doutor",
-  },
-  {
-    accessorKey: "sampleId",
-    header: "Amostra",
-  },
-  {
-    accessorKey: "examsId",
-    header: "Exame",
   },
   {
     accessorKey: "status",
