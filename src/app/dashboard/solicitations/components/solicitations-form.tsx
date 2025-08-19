@@ -149,6 +149,37 @@ export default function SolicitationsForm({
     values: defaultValues,
   });
 
+  const populateCheckboxes = useCallback(
+    (
+      sampleData: GenericResponse<Sample[]>,
+      examsData: GenericResponse<Exams[]>,
+      infectiouAgentsData: GenericResponse<InfectiousAgents[]>
+    ) => {
+      setSampleCheckboxes(
+        sampleData?.data?.map((item) =>
+          initialData?.samples.includes(item.id)
+            ? { ...item, checked: true }
+            : { ...item, checked: false }
+        )
+      );
+      setExamsCheckboxes(
+        examsData?.data?.map((item) =>
+          initialData?.exams.includes(item.id)
+            ? { ...item, checked: true }
+            : { ...item, checked: false }
+        )
+      );
+      setInfectiousAgentsCheckboxes(
+        infectiouAgentsData?.data?.map((item) =>
+          initialData?.infectiousAgents.includes(item.id)
+            ? { ...item, checked: true }
+            : { ...item, checked: false }
+        )
+      );
+    },
+    [initialData?.exams, initialData?.infectiousAgents, initialData?.samples]
+  );
+
   const fetchDropdownItemsData = useCallback(async () => {
     const [infectiouAgentsData, examsData, sampleData] = await Promise.all([
       fetcher<GenericResponse<InfectiousAgents[]>>(
@@ -158,28 +189,8 @@ export default function SolicitationsForm({
       fetcher<GenericResponse<Sample[]>>("/sample?limit=1000&currentPage=1"),
     ]);
 
-    setSampleCheckboxes(
-      sampleData?.data?.map((item) =>
-        initialData?.samples.includes(item.id)
-          ? { ...item, checked: true }
-          : { ...item, checked: false }
-      )
-    );
-    setExamsCheckboxes(
-      examsData?.data?.map((item) =>
-        initialData?.exams.includes(item.id)
-          ? { ...item, checked: true }
-          : { ...item, checked: false }
-      )
-    );
-    setInfectiousAgentsCheckboxes(
-      infectiouAgentsData?.data?.map((item) =>
-        initialData?.infectiousAgents.includes(item.id)
-          ? { ...item, checked: true }
-          : { ...item, checked: false }
-      )
-    );
-  }, [initialData?.exams, initialData?.infectiousAgents, initialData?.samples]);
+    populateCheckboxes(sampleData, examsData, infectiouAgentsData);
+  }, [populateCheckboxes]);
 
   useEffect(() => {
     fetchDropdownItemsData();
