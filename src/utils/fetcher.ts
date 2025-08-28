@@ -1,5 +1,3 @@
-import { getAccessToken } from "./auth";
-
 /**
  * Função fetcher para fazer requisições à API com autenticação.
  * @param endpoint - O endpoint da API a ser chamado.
@@ -9,10 +7,11 @@ import { getAccessToken } from "./auth";
  * @throws Erro se a requisição falhar ou se o token de acesso não estiver definido.
  */
 
+import { getAccessToken, refreshToken } from "@/hooks/use-login";
+
 export async function fetcher<T = unknown>(
   endpoint: string,
-  options: RequestInit = {},
-  ctx?: never
+  options: RequestInit = {}
 ): Promise<T> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -20,9 +19,7 @@ export async function fetcher<T = unknown>(
     throw new Error("NEXT_PUBLIC_API_BASE_URL não está definida.");
   }
 
-  const token = getAccessToken(ctx);
-
-  console.log(`Token: ${token}`);
+  let token = await getAccessToken();
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -32,10 +29,25 @@ export async function fetcher<T = unknown>(
 
   const url = `${baseUrl}${endpoint}`;
 
-  const res = await fetch(url, {
+  let res = await fetch(url, {
     ...options,
     headers,
+    credentials: "include",
   });
+
+  if (res.status === 401) {
+    const { access_token } = await refreshToken();
+    token = access_token;
+    res = await fetch(`${url}`, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+  }
 
   return res.json();
 }

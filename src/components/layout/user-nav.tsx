@@ -3,16 +3,16 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { useLogout } from "@/hooks/use-login";
 import { UserAvatarProfile } from "../user-avatar-profile";
+import { Separator } from "../ui/separator";
 export function UserNav() {
-  const router = useRouter();
+  const { mutateAsync: handleLogout } = useLogout();
   const user = {
     fullName: "Filipe Mendonça",
     emailAddresses: [
@@ -21,6 +21,11 @@ export function UserNav() {
       },
     ],
   };
+
+  const onLogout = async () => {
+    await handleLogout();
+  };
+
   if (user) {
     return (
       <DropdownMenu>
@@ -45,7 +50,8 @@ export function UserNav() {
               </p>
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+          <Separator className="mb-1" />
+          {/* <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
               Profile
@@ -54,10 +60,9 @@ export function UserNav() {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-            {/* <SignOutButton redirectUrl="/auth/sign-in" /> */}
+          <DropdownMenuSeparator /> */}
+          <DropdownMenuItem className="cursor-pointer" onClick={onLogout}>
+            <DropdownMenuItem>Sair</DropdownMenuItem>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
