@@ -5,12 +5,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useLogout } from "@/hooks/use-login";
-import { UserAvatarProfile } from "../user-avatar-profile";
 import { Separator } from "../ui/separator";
+import { UserAvatarProfile } from "../user-avatar-profile";
 export function UserNav() {
   const { mutateAsync: handleLogout } = useLogout();
   const user = {
