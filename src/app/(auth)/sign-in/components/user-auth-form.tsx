@@ -14,6 +14,7 @@ import { useLogin } from "@/hooks/use-login";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HTMLAttributes } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,6 +37,7 @@ const formSchema = z.object({
 });
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+  const route = useRouter();
   const { mutateAsync: loginAsync, isPending } = useLogin();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,7 +51,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     const res = await loginAsync(data);
     if (res.access_token) {
-      window.location.href = "/dashboard";
+      route.push("/dashboard");
     }
   }
 

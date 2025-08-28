@@ -10,16 +10,10 @@ import {
 import { useLogout } from "@/hooks/use-login";
 import { Separator } from "../ui/separator";
 import { UserAvatarProfile } from "../user-avatar-profile";
+import { useUserStore } from "@/context/stores/user.store";
 export function UserNav() {
   const { mutateAsync: handleLogout } = useLogout();
-  const user = {
-    fullName: "Filipe Mendonça",
-    emailAddresses: [
-      {
-        emailAddress: "filiperm15@gmail.com",
-      },
-    ],
-  };
+  const { user } = useUserStore();
 
   const onLogout = async () => {
     await handleLogout();
@@ -41,11 +35,9 @@ export function UserNav() {
         >
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm leading-none font-medium">
-                {user.fullName}
-              </p>
+              <p className="text-sm leading-none font-medium">{user.name}</p>
               <p className="text-muted-foreground text-xs leading-none">
-                {user.emailAddresses[0].emailAddress}
+                {user.email}
               </p>
             </div>
           </DropdownMenuLabel>

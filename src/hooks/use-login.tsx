@@ -1,6 +1,8 @@
 "use client";
 
 import { toastError } from "@/components/toasts";
+import { useUserStore } from "@/context/stores/user.store";
+import { UserDTO } from "@/dto/user.dto";
 import { isTokenExpired } from "@/utils/utils";
 import { useMutation } from "@tanstack/react-query";
 
@@ -11,7 +13,7 @@ type LoginPayload = {
 
 type LoginResponse = {
   access_token: string;
-  //   user: { id: number; name: string; email: string };
+  user: UserDTO;
 };
 
 interface LoginErrorResponse {
@@ -43,10 +45,12 @@ async function loginUser(data: LoginPayload): Promise<LoginResponse> {
 
 // Hook
 export function useLogin() {
+  const setUser = useUserStore((state) => state.setUser);
   return useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: loginUser,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       sessionStorage.setItem("access_token", data.access_token);
+      setUser(data.user);
     },
     onError: (err) => {
       toastError({

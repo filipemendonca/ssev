@@ -29,12 +29,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Users } from "../data-table/columns";
-
-enum ROLE {
-  ADMINISTRADOR = "ADMINISTRADOR",
-  VETERINARIO = "VETERINARIO",
-  PATOLOGISTA = "PATOLOGISTA",
-}
+import { ROLE } from "@/enum/role.enum";
 
 const formSchema = z.object({
   name: z.string().min(1, {
