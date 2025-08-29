@@ -16,8 +16,8 @@ export const useUserStore = create<UserStoreProps>()(
       clearUser: () => set({ user: null }),
     }),
     {
-      name: "x", // chave no storage (localStorage por padrão)
-      storage: createJSONStorage(() => sessionStorage), // 👉 se quiser usar sessionStorage
+      name: "_e",
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );

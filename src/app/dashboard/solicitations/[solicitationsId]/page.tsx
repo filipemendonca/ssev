@@ -1,7 +1,7 @@
 import FormCardSkeleton from "@/components/form-card-skeleton";
 import PageContainer from "@/components/layout/page-container";
 import { Suspense } from "react";
-import UsersViewPage from "../components/solicitations-view-page";
+import SolicitationsViewPage from "../components/solicitations-view-page";
 
 export const metadata = {
   title: "Dashboard - Solicitação",
@@ -15,7 +15,7 @@ export default async function Page(props: PageProps) {
     <PageContainer scrollable>
       <div className="flex-1 space-y-4">
         <Suspense fallback={<FormCardSkeleton />}>
-          <UsersViewPage solicitationsId={params.solicitationsId} />
+          <SolicitationsViewPage solicitationsId={params.solicitationsId} />
         </Suspense>
       </div>
     </PageContainer>

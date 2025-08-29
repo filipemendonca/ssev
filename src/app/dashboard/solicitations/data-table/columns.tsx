@@ -14,6 +14,7 @@ import {
 // You can use a Zod schema here if you want.
 export type Solicitations = {
   id: string;
+  userId: string;
   tutor: string;
   patient: string;
   gender: string;

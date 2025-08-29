@@ -42,6 +42,7 @@ import {
   InfectiousAgentsWithCheck,
   SampleWithCheck,
 } from "../types/types";
+import { useUserStore } from "@/context/stores/user.store";
 
 enum GENDER {
   MACHO = "Macho",
@@ -111,6 +112,7 @@ export default function SolicitationsForm({
   isEdit,
 }: Readonly<SolicitationsFormProps>) {
   const route = useRouter();
+  const { user } = useUserStore();
   const [sampleCheckboxes, setSampleCheckboxes] = useState<SampleWithCheck[]>(
     initialData?.samples as []
   );
@@ -122,6 +124,7 @@ export default function SolicitationsForm({
   >(initialData?.infectiousAgents as []);
 
   const defaultValues = {
+    userId: initialData?.userId || "",
     tutor: initialData?.tutor || "",
     patient: initialData?.patient || "",
     age: initialData?.age || "",
@@ -233,6 +236,7 @@ export default function SolicitationsForm({
   async function mapProperties(values: z.infer<typeof formSchema>) {
     return {
       ...values,
+      userId: user?.id,
       samples: sampleCheckboxes.filter((s) => s.checked).map((s) => s.id),
       exams: examsCheckboxes.filter((e) => e.checked).map((e) => e.id),
       infectiousAgents: infectiousAgentsCheckboxes

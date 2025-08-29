@@ -13,10 +13,11 @@ import { UserAvatarProfile } from "../user-avatar-profile";
 import { useUserStore } from "@/context/stores/user.store";
 export function UserNav() {
   const { mutateAsync: handleLogout } = useLogout();
-  const { user } = useUserStore();
+  const { user, clearUser } = useUserStore();
 
   const onLogout = async () => {
     await handleLogout();
+    clearUser();
   };
 
   if (user) {

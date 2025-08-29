@@ -25,15 +25,24 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 import { navItems } from "@/constants/data";
 import { Icons } from "../icons";
+import { useUserStore } from "@/context/stores/user.store";
+import { ROLE } from "@/enum/role.enum";
 
 export default function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUserStore();
   const { isOpen } = useMediaQuery();
-  //   const router = useRouter();
+
+  const isAdminAndActiveUser =
+    user?.isActive && user.role === ROLE.ADMINISTRADOR;
 
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [isOpen]);
+
+  const navItemsAfterKnowRole = isAdminAndActiveUser
+    ? navItems
+    : navItems.filter((x) => x.title !== "Administrativo");
 
   return (
     <Sidebar collapsible="icon">
@@ -42,10 +51,8 @@ export default function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
-            {navItems.map((item) => {
-              const Icon = item.icon
-                ? Icons[item.icon as keyof typeof Icons]
-                : Icons.logo;
+            {navItemsAfterKnowRole.map((item) => {
+              const Icon = item.icon ? Icons[item.icon] : Icons.logo;
               return item?.items && item?.items?.length > 0 ? (
                 <Collapsible
                   key={item.title}
