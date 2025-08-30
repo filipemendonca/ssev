@@ -14,10 +14,14 @@ import { Suspense, useEffect, useState } from "react";
 import { SampleCreateDialog } from "./components/sample-create-dialog";
 import { SampleFilter } from "./components/sample-filter";
 import { columns, Sample } from "./data-table/columns";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { SampleFilterDto } from "./dto/sample.dto";
+
+const baseUrl = "/sample";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
-  const [search, setSearch] = useState({ name: "" });
+  const [search, setSearch] = useState<SampleFilterDto | null>(null);
 
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
@@ -26,16 +30,28 @@ export default function Page() {
     }
   );
 
-  const { data, refetch } = useApiQuery<GenericResponse<Sample[]>>(
+  const paginationUrl = `?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`;
+
+  const { data: getAll } = useApiQuery<GenericResponse<Sample[]>>(
     ["sample", paginationOptions],
-    `/sample?limit=${paginationOptions.limit}&currentPage=${
-      paginationOptions.currentPage
-    }${search.name !== "" ? `&name=${search.name}` : ""}`
+    `${baseUrl}${paginationUrl}`
   );
 
+  const { mutateAsync: searchAsync, data: getSearched } = useApiMutation<
+    GenericResponse<Sample[]>
+  >({
+    endpoint: `${baseUrl}/search${paginationUrl}`,
+    method: "POST",
+    queryKeys: ["sampleSearch"],
+  });
+
   useEffect(() => {
-    if (search.name !== "") refetch();
-  }, [refetch, search]);
+    if (search !== null) searchAsync(search as never);
+  }, [search, searchAsync]);
+
+  const data = search?.name
+    ? (getSearched as GenericResponse<Sample[]>)
+    : (getAll as GenericResponse<Sample[]>);
 
   return (
     <PageContainer scrollable={false}>
@@ -66,7 +82,7 @@ export default function Page() {
         >
           <GenericDataDataTable
             columns={columns}
-            item={data as GenericResponse<Sample[]>}
+            item={data}
             setPaginationOptions={setPaginationOptions}
           />
         </Suspense>

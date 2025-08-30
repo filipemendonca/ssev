@@ -13,6 +13,7 @@ import { Search } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { InfectiousAgentsFilterDto } from "../dto/infectious-agents.dto";
 
 const formSchema = z.object({
   name: z.string(),
@@ -21,7 +22,7 @@ const formSchema = z.object({
 type InfectiousAgentsForm = z.infer<typeof formSchema>;
 
 interface InfectiousAgentsActionDialogProps {
-  setSearch: Dispatch<SetStateAction<{ name: string }>>;
+  setSearch: Dispatch<SetStateAction<InfectiousAgentsFilterDto>>;
 }
 
 export function InfectiousAgentsFilter({

@@ -14,10 +14,14 @@ import { Suspense, useEffect, useState } from "react";
 import { columns, InfectiousAgents } from "./data-table/columns";
 import { InfectiousAgentsCreateDialog } from "./components/infectious-agents-create-dialog";
 import { InfectiousAgentsFilter } from "./components/infectious-agents-filter";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { InfectiousAgentsFilterDto } from "./dto/infectious-agents.dto";
+
+const baseUrl = "/infectious-agents";
 
 export default function Page() {
   const [openDialog, setOpenDialog] = useState(false);
-  const [search, setSearch] = useState({ name: "" });
+  const [search, setSearch] = useState<InfectiousAgentsFilterDto | null>(null);
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
       currentPage: 1,
@@ -25,16 +29,28 @@ export default function Page() {
     }
   );
 
-  const { data, refetch } = useApiQuery<GenericResponse<InfectiousAgents[]>>(
+  const paginationUrl = `?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`;
+
+  const { data: getAll } = useApiQuery<GenericResponse<InfectiousAgents[]>>(
     ["infectious-agents", paginationOptions],
-    `/infectious-agents?limit=${paginationOptions.limit}&currentPage=${
-      paginationOptions.currentPage
-    }${search.name !== "" ? `&name=${search.name}` : ""}`
+    `${baseUrl}${paginationUrl}`
   );
 
+  const { mutateAsync: searchAsync, data: getSearched } = useApiMutation<
+    GenericResponse<InfectiousAgents[]>
+  >({
+    endpoint: `${baseUrl}/search${paginationUrl}`,
+    method: "POST",
+    queryKeys: ["infectiousAgentsSearch"],
+  });
+
   useEffect(() => {
-    if (search.name !== "") refetch();
-  }, [refetch, search]);
+    if (search !== null) searchAsync(search as never);
+  }, [searchAsync, search]);
+
+  const data = search?.name
+    ? (getSearched as GenericResponse<InfectiousAgents[]>)
+    : (getAll as GenericResponse<InfectiousAgents[]>);
 
   return (
     <PageContainer scrollable={false}>
@@ -62,7 +78,7 @@ export default function Page() {
         >
           <GenericDataDataTable
             columns={columns}
-            item={data as GenericResponse<InfectiousAgents[]>}
+            item={data}
             setPaginationOptions={setPaginationOptions}
           />
         </Suspense>

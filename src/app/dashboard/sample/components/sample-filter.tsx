@@ -13,6 +13,7 @@ import { Search } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { SampleFilterDto } from "../dto/sample.dto";
 
 const formSchema = z.object({
   name: z.string(),
@@ -21,7 +22,7 @@ const formSchema = z.object({
 type SampleForm = z.infer<typeof formSchema>;
 
 interface SampleActionDialogProps {
-  setSearch: Dispatch<SetStateAction<{ name: string }>>;
+  setSearch: Dispatch<SetStateAction<SampleFilterDto>>;
 }
 
 export function SampleFilter({ setSearch }: Readonly<SampleActionDialogProps>) {
