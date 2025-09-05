@@ -14,6 +14,7 @@ interface GenericDataTableProps<TData, TValue> {
   item: GenericResponse<TData[]>;
   setPaginationOptions: Dispatch<SetStateAction<PaginationOptions>>;
   isClicable?: boolean;
+  onRowClick?: (model: TData) => void;
 }
 
 export function GenericDataDataTable<TData, TValue>({
@@ -21,6 +22,7 @@ export function GenericDataDataTable<TData, TValue>({
   item,
   setPaginationOptions,
   isClicable = false,
+  onRowClick,
 }: Readonly<GenericDataTableProps<TData, TValue>>) {
   const { data, meta } = item ?? {};
 
@@ -47,5 +49,12 @@ export function GenericDataDataTable<TData, TValue>({
       });
     },
   });
-  return <DataTable table={table} meta={meta} isClicable={isClicable} />;
+  return (
+    <DataTable
+      table={table}
+      meta={meta}
+      isClickable={isClicable}
+      onRowClick={onRowClick}
+    />
+  );
 }

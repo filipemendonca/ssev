@@ -7,12 +7,14 @@ import SolicitationsForm from "./solicitations-form";
 
 type TUsersViewPageProps = {
   solicitationsId: string;
+  viewMode?: boolean;
 };
 
 export default function SolicitationsViewPage({
   solicitationsId,
+  viewMode,
 }: Readonly<TUsersViewPageProps>) {
-  const isEdit = solicitationsId !== "create";
+  const isEdit = solicitationsId !== "create" && !viewMode;
 
   const { data } = useQuery<GenericResponse<Solicitations>>({
     queryKey: ["getSolicitationsById", solicitationsId],
@@ -20,15 +22,19 @@ export default function SolicitationsViewPage({
       fetcher<GenericResponse<Solicitations>>(
         `/solicitation/${solicitationsId}`
       ),
-    enabled: isEdit,
+    enabled: isEdit || viewMode,
   });
 
-  const solicitations = isEdit ? data?.data : undefined;
+  const solicitations = isEdit || viewMode ? data?.data : undefined;
 
   let pageTitle = "Solicitação - Novo";
 
   if (solicitationsId !== "create") {
-    pageTitle = `Solicitação - Editar`;
+    if (viewMode) {
+      pageTitle = `Solicitação - Visualizar`;
+    } else {
+      pageTitle = `Solicitação - Editar`;
+    }
   }
 
   return (
@@ -36,6 +42,7 @@ export default function SolicitationsViewPage({
       isEdit={isEdit}
       initialData={solicitations}
       pageTitle={pageTitle}
+      isView={viewMode}
     />
   );
 }

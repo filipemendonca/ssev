@@ -3,22 +3,28 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "../ui/modal";
 
-interface AlertModalProps {
+interface GenericModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onClickButton1?: () => void;
+  onClickButton2?: () => void;
   loading: boolean;
   title: string;
   description: string;
+  buttonText1?: string;
+  buttonText2?: string;
 }
 
-export const AlertModal: React.FC<AlertModalProps> = ({
+export const GenericModal: React.FC<GenericModalProps> = ({
   isOpen,
   onClose,
-  onConfirm,
+  onClickButton1,
+  onClickButton2,
   loading,
   title,
   description,
+  buttonText1 = "Cancelar",
+  buttonText2 = "Continuar",
 }) => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -41,18 +47,18 @@ export const AlertModal: React.FC<AlertModalProps> = ({
         <Button
           disabled={loading}
           variant="outline"
-          onClick={onClose}
+          onClick={onClickButton1}
           className="cursor-pointer"
         >
-          Cancelar
+          {buttonText1}
         </Button>
         <Button
           disabled={loading}
           variant="destructive"
-          onClick={onConfirm}
+          onClick={onClickButton2}
           className="cursor-pointer"
         >
-          Continuar
+          {buttonText2}
         </Button>
       </div>
     </Modal>

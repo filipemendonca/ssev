@@ -43,6 +43,7 @@ import {
   SampleWithCheck,
 } from "../types/types";
 import { useUserStore } from "@/context/stores/user.store";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 enum GENDER {
   MACHO = "Macho",
@@ -104,12 +105,14 @@ interface SolicitationsFormProps {
   initialData: Solicitations | undefined;
   pageTitle: string;
   isEdit: boolean;
+  isView?: boolean;
 }
 
 export default function SolicitationsForm({
   initialData,
   pageTitle,
   isEdit,
+  isView,
 }: Readonly<SolicitationsFormProps>) {
   const route = useRouter();
   const { user } = useUserStore();
@@ -264,11 +267,32 @@ export default function SolicitationsForm({
     route.push("/dashboard/solicitations");
   }
 
+  const renderButtonChangeStatus = () =>
+    isView ? (
+      <div>
+        <Link
+          href="/dashboard/solicitations"
+          className={cn(
+            buttonVariants({ variant: "secondary" }),
+            "text-xs md:text-sm cursor-pointer mr-2"
+          )}
+        >
+          <IconArrowLeft /> Voltar
+        </Link>
+        <Button type="submit" className="cursor-pointer">
+          <ReloadIcon className="mr-2 h-4 w-4" /> Despachar para filtragem
+        </Button>
+      </div>
+    ) : (
+      <></>
+    );
+
   return (
     <Card className="mx-auto w-full">
       <CardHeader>
-        <CardTitle className="text-left text-2xl font-bold">
+        <CardTitle className="flex justify-between text-2xl font-bold ">
           {pageTitle}
+          {renderButtonChangeStatus()}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -278,6 +302,7 @@ export default function SolicitationsForm({
               <FormField
                 control={form.control}
                 name="tutor"
+                disabled={isView}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tutor</FormLabel>
@@ -291,6 +316,7 @@ export default function SolicitationsForm({
               <FormField
                 control={form.control}
                 name="patient"
+                disabled={isView}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Paciente</FormLabel>
@@ -307,6 +333,7 @@ export default function SolicitationsForm({
               <FormField
                 control={form.control}
                 name="specie"
+                disabled={isView}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Espécie / Raça</FormLabel>
@@ -323,6 +350,7 @@ export default function SolicitationsForm({
               <FormField
                 control={form.control}
                 name="age"
+                disabled={isView}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Idade</FormLabel>
@@ -344,6 +372,7 @@ export default function SolicitationsForm({
                   <FormItem>
                     <FormLabel>Gênero</FormLabel>
                     <Select
+                      disabled={isView}
                       onValueChange={(value) => field.onChange(value)}
                       value={field.value}
                     >
@@ -370,6 +399,7 @@ export default function SolicitationsForm({
               <FormField
                 control={form.control}
                 name="doctor"
+                disabled={isView}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Doutor</FormLabel>
@@ -383,6 +413,7 @@ export default function SolicitationsForm({
               <FormField
                 control={form.control}
                 name="hospitalVet"
+                disabled={isView}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Clínica / Hospital</FormLabel>
@@ -403,6 +434,7 @@ export default function SolicitationsForm({
               <FormField
                 control={form.control}
                 name="examResultType"
+                disabled={isView}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Tipo de exame</FormLabel>
@@ -410,6 +442,7 @@ export default function SolicitationsForm({
                       onValueChange={(value) => {
                         field.onChange(value);
                       }}
+                      disabled={isView}
                       value={field.value}
                     >
                       <FormControl>
@@ -437,6 +470,7 @@ export default function SolicitationsForm({
                   <FormItem>
                     <FormLabel>Tubo de coleta de sangue</FormLabel>
                     <Select
+                      disabled={isView}
                       onValueChange={(value) => field.onChange(value)}
                       value={field.value}
                     >
@@ -473,6 +507,7 @@ export default function SolicitationsForm({
                     >
                       <Checkbox
                         id={sample.id}
+                        disabled={isView}
                         checked={sample.checked}
                         onCheckedChange={(value) =>
                           toggleCheck(sample.id, value === true)
@@ -497,6 +532,7 @@ export default function SolicitationsForm({
                       <Checkbox
                         id={exams.id}
                         checked={exams.checked}
+                        disabled={isView}
                         onCheckedChange={(value) =>
                           toggleCheck(exams.id, value === true)
                         }
@@ -525,6 +561,7 @@ export default function SolicitationsForm({
                       <Checkbox
                         id={infectiousAgents.id}
                         checked={infectiousAgents.checked}
+                        disabled={isView}
                         onCheckedChange={(value) =>
                           toggleCheck(infectiousAgents.id, value === true)
                         }
@@ -538,20 +575,23 @@ export default function SolicitationsForm({
                 </div>
               </CardContent>
             </Card>
-
-            <Link
-              href="/dashboard/solicitations"
-              className={cn(
-                buttonVariants({ variant: "secondary" }),
-                "text-xs md:text-sm cursor-pointer mr-2"
-              )}
-            >
-              <IconArrowLeft /> Voltar
-            </Link>
-            <Button type="submit" className="cursor-pointer">
-              <SaveAll />
-              Salvar
-            </Button>
+            {isView ?? (
+              <>
+                <Link
+                  href="/dashboard/solicitations"
+                  className={cn(
+                    buttonVariants({ variant: "secondary" }),
+                    "text-xs md:text-sm cursor-pointer mr-2"
+                  )}
+                >
+                  <IconArrowLeft /> Voltar
+                </Link>
+                <Button type="submit" className="cursor-pointer">
+                  <SaveAll />
+                  Salvar
+                </Button>
+              </>
+            )}
           </form>
         </Form>
       </CardContent>

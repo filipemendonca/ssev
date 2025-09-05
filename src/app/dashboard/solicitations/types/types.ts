@@ -15,14 +15,24 @@ export enum BLOOD_COLLECTION_TUBE_COLOR {
   TAMPA_AZUL = "Tampa Azul",
 }
 
+// export enum SolicitationStatus {
+//   CRIADO, // azul
+//   FILTRAGEM, // amerelo
+//   EM_TRANSPORTE, // amarelo
+//   EM_ANALISE, // amarelo
+//   BLOQUEADO, // laranja
+//   FINALIZADO, // verde
+//   CANCELADO, // vermelho
+// }
+
 export enum SolicitationStatus {
-  CRIADO, // azul
-  FILTRAGEM, // amerelo
-  EM_TRANSPORTE, // amarelo
-  EM_ANALISE, // amarelo
-  BLOQUEADO, // laranja
-  FINALIZADO, // verde
-  CANCELADO, // vermelho
+  CRIADO = "CRIADO",
+  FILTRAGEM = "FILTRAGEM",
+  EM_TRANSPORTE = "EM_TRANSPORTE",
+  EM_ANALISE = "EM_ANALISE",
+  BLOQUEADO = "BLOQUEADO",
+  FINALIZADO = "FINALIZADO",
+  CANCELADO = "CANCELADO",
 }
 
 export enum ExamResultType {
