@@ -44,6 +44,7 @@ import {
 } from "../types/types";
 import { useUserStore } from "@/context/stores/user.store";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
 
 enum GENDER {
   MACHO = "Macho",
@@ -150,6 +151,8 @@ export default function SolicitationsForm({
       : "",
   };
 
+  const { buttonGridText } = updateTextDialogByStatus(initialData?.status);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: defaultValues,
@@ -230,7 +233,7 @@ export default function SolicitationsForm({
     GenericResponse<Solicitations>
   >({
     endpoint: `/solicitation/${initialData?.id}`,
-    method: "PUT",
+    method: "PATCH",
     queryKeys: ["editSolicitation"],
     invalidateQueries: true,
     invalidateQueryKeys: ["solicitation"],
@@ -267,6 +270,14 @@ export default function SolicitationsForm({
     route.push("/dashboard/solicitations");
   }
 
+  const handleChangeStatus = async () => {
+    if (initialData?.status) {
+      initialData.status = changeToNextStatus(initialData.status);
+      await editSolicitationAsync(initialData as never);
+      route.push("/dashboard/solicitations");
+    }
+  };
+
   const renderButtonChangeStatus = () =>
     isView ? (
       <div>
@@ -279,8 +290,12 @@ export default function SolicitationsForm({
         >
           <IconArrowLeft /> Voltar
         </Link>
-        <Button type="submit" className="cursor-pointer">
-          <ReloadIcon className="mr-2 h-4 w-4" /> Despachar para filtragem
+        <Button
+          type="submit"
+          className="cursor-pointer"
+          onClick={handleChangeStatus}
+        >
+          <ReloadIcon className="mr-2 h-4 w-4" /> {buttonGridText}
         </Button>
       </div>
     ) : (

@@ -19,6 +19,8 @@ import { useState } from "react";
 import { SolicitationStatus } from "../types/types";
 import { Solicitations } from "./columns";
 import { GenericModal } from "@/components/modal/generic-modal";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
 
 interface CellActionProps {
   model: Solicitations;
@@ -47,33 +49,34 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
     invalidateQueryKeys: ["solicitation"],
   });
 
+  const { mutateAsync: editSolicitationAsync } = useApiMutation<
+    GenericResponse<Solicitations>
+  >({
+    endpoint: `/solicitation/${model?.id}`,
+    method: "PATCH",
+    queryKeys: ["editSolicitation"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["solicitation"],
+  });
+
   const onConfirm = async () => {
     await deleteItemAsync(model.id as never);
     setOpen(false);
   };
 
-  const onClickButton1GenericModal = () => {
+  const onClickButton1GenericModal = async () => {
+    model.status = changeToNextStatus(model.status);
+    await editSolicitationAsync(model as never);
+    setOpenAlertDialogChangeStatus(false);
+    window.location.reload();
+  };
+
+  const onClickButton2GenericModal = () => {
     router.push(`solicitations/${model.id}/view`);
   };
 
-  let solicitationStatusChangeText = "";
-  let alertDialogChangeStatusTitle = "";
-  let alertDialogChangeStatusDescription = "";
-  let buttonText1 = "";
-  let buttonText2 = "";
-  switch (model.status) {
-    case SolicitationStatus.CRIADO:
-      solicitationStatusChangeText = "Despachar para filtragem";
-      alertDialogChangeStatusTitle = "Despachar essa solicitação?";
-      alertDialogChangeStatusDescription =
-        "Deseja despachar essa solicitação para filtragem?";
-      buttonText1 = "Despachar sem conferir";
-      buttonText2 = "Conferir solicitação";
-      break;
-    case SolicitationStatus.FILTRAGEM:
-      solicitationStatusChangeText = "Despachar para transporte";
-      break;
-  }
+  const { title, description, buttonGridText, button1, button2 } =
+    updateTextDialogByStatus(model.status);
 
   return (
     <>
@@ -88,13 +91,13 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
       <GenericModal
         isOpen={openAlertDialogChangeStatus}
         onClose={() => setOpenAlertDialogChangeStatus(false)}
-        onClickButton1={() => {}}
-        onClickButton2={onClickButton1GenericModal}
+        onClickButton1={onClickButton1GenericModal}
+        onClickButton2={onClickButton2GenericModal}
         loading={loading}
-        title={alertDialogChangeStatusTitle}
-        description={alertDialogChangeStatusDescription}
-        buttonText1={buttonText1}
-        buttonText2={buttonText2}
+        title={title}
+        description={description}
+        buttonText1={button1}
+        buttonText2={button2}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -132,8 +135,7 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
             onClick={() => setOpenAlertDialogChangeStatus(true)}
             className="cursor-pointer"
           >
-            <ReloadIcon className="mr-2 h-4 w-4" />{" "}
-            {solicitationStatusChangeText}
+            <ReloadIcon className="mr-2 h-4 w-4" /> {buttonGridText}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

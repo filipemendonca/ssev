@@ -12,6 +12,7 @@ import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { columns, Solicitations } from "./data-table/columns";
+import { SolicitationStatus } from "./types/types";
 
 export default function Page() {
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
@@ -25,6 +26,12 @@ export default function Page() {
     ["solicitation", paginationOptions],
     `/solicitation?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
   );
+
+  const hasNonFinalized = data?.data.some(
+    (row) => row.status !== SolicitationStatus.FINALIZADO
+  );
+
+  const columnsDefinitions = columns(hasNonFinalized!);
 
   return (
     <PageContainer scrollable={false}>
@@ -48,7 +55,7 @@ export default function Page() {
           }
         >
           <GenericDataDataTable
-            columns={columns}
+            columns={columnsDefinitions}
             item={data as GenericResponse<Solicitations[]>}
             setPaginationOptions={setPaginationOptions}
             isClicable={true}
