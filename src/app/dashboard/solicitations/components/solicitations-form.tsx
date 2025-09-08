@@ -19,11 +19,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useUserStore } from "@/context/stores/user.store";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { cn } from "@/lib/utils";
 import { GenericResponse } from "@/types";
 import { fetcher } from "@/utils/fetcher";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { SaveAll } from "lucide-react";
 import Link from "next/link";
@@ -40,10 +42,11 @@ import {
   ExamResultType,
   ExamsWithCheck,
   InfectiousAgentsWithCheck,
+  recordStatus,
   SampleWithCheck,
+  SolicitationStatus,
+  styles,
 } from "../types/types";
-import { useUserStore } from "@/context/stores/user.store";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
 
 enum GENDER {
@@ -278,26 +281,67 @@ export default function SolicitationsForm({
     }
   };
 
+  // const renderBlockSolicitationButton = () =>
+  //   initialData && initialData?.status !== SolicitationStatus.FINALIZADO ? (
+  //     <Button
+  //       type="submit"
+  //       className="cursor-pointer mr-2"
+  //       onClick={() => {}}
+  //       variant="warning"
+  //     >
+  //       {initialData?.status === SolicitationStatus.BLOQUEADO ? (
+  //         <UnlockIcon className="mr-2 h-4 w-4" />
+  //       ) : (
+  //         <LockIcon className="mr-2 h-4 w-4" />
+  //       )}{" "}
+  //       {initialData?.status === SolicitationStatus.BLOQUEADO
+  //         ? "Desbloquear solicitação"
+  //         : "Bloquear solicitação"}
+  //     </Button>
+  //   ) : (
+  //     <></>
+  //   );
+
+  const renderChangeStatusButton = () =>
+    initialData &&
+    initialData?.status !== SolicitationStatus.FINALIZADO &&
+    initialData.status !== SolicitationStatus.BLOQUEADO ? (
+      <Button
+        type="button"
+        className="cursor-pointer"
+        onClick={handleChangeStatus}
+        variant={
+          initialData?.status === SolicitationStatus.EM_ANALISE
+            ? "success"
+            : "default"
+        }
+      >
+        <ReloadIcon className="mr-2 h-4 w-4" /> {buttonGridText}
+      </Button>
+    ) : (
+      <></>
+    );
+
   const renderButtonChangeStatus = () =>
     isView ? (
       <div>
-        <Link
-          href="/dashboard/solicitations"
-          className={cn(
-            buttonVariants({ variant: "secondary" }),
-            "text-xs md:text-sm cursor-pointer mr-2"
-          )}
-        >
-          <IconArrowLeft /> Voltar
-        </Link>
-        <Button
-          type="submit"
-          className="cursor-pointer"
-          onClick={handleChangeStatus}
-        >
-          <ReloadIcon className="mr-2 h-4 w-4" /> {buttonGridText}
-        </Button>
+        {/* {renderBlockSolicitationButton()} */}
+        {renderChangeStatusButton()}
       </div>
+    ) : (
+      <></>
+    );
+
+  const renderStatusBadge = () =>
+    isView && initialData ? (
+      <span
+        className={`inline-flex items-center rounded-2xl px-2.5 py-0.5 text-xs font-medium ml-2 ${
+          styles[initialData.status as keyof typeof styles] ||
+          "bg-gray-100 text-gray-800"
+        }`}
+      >
+        {recordStatus[initialData.status]}
+      </span>
     ) : (
       <></>
     );
@@ -306,8 +350,13 @@ export default function SolicitationsForm({
     <Card className="mx-auto w-full">
       <CardHeader>
         <CardTitle className="flex justify-between text-2xl font-bold ">
-          {pageTitle}
-          {renderButtonChangeStatus()}
+          <div className="flex justify-between">
+            {pageTitle}
+            {renderStatusBadge()}
+          </div>
+          <div className="flex justify-between">
+            {renderButtonChangeStatus()}
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -590,22 +639,20 @@ export default function SolicitationsForm({
                 </div>
               </CardContent>
             </Card>
+            <Link
+              href="/dashboard/solicitations"
+              className={cn(
+                buttonVariants({ variant: "secondary" }),
+                "text-xs md:text-sm cursor-pointer mr-2"
+              )}
+            >
+              <IconArrowLeft /> Voltar
+            </Link>
             {isView ?? (
-              <>
-                <Link
-                  href="/dashboard/solicitations"
-                  className={cn(
-                    buttonVariants({ variant: "secondary" }),
-                    "text-xs md:text-sm cursor-pointer mr-2"
-                  )}
-                >
-                  <IconArrowLeft /> Voltar
-                </Link>
-                <Button type="submit" className="cursor-pointer">
-                  <SaveAll />
-                  Salvar
-                </Button>
-              </>
+              <Button type="submit" className="cursor-pointer">
+                <SaveAll />
+                Salvar
+              </Button>
             )}
           </form>
         </Form>

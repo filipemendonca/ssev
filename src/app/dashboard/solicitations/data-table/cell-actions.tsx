@@ -1,5 +1,6 @@
 "use client";
 import { AlertModal } from "@/components/modal/alert-modal";
+import { GenericModal } from "@/components/modal/generic-modal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,23 +11,29 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useUserStore } from "@/context/stores/user.store";
 import { ROLE } from "@/enum/role.enum";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
 import { GenericResponse } from "@/types";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
+import { EyeIcon, LockIcon, UnlockIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { SolicitationStatus } from "../types/types";
-import { Solicitations } from "./columns";
-import { GenericModal } from "@/components/modal/generic-modal";
-import { useApiMutation } from "@/hooks/use-api-mutation";
 import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
+import { Solicitations } from "./columns";
 
 interface CellActionProps {
   model: Solicitations;
+  setSolicitationId?: Dispatch<SetStateAction<string>>;
+  setOpenBlockedSolicitationModal?: Dispatch<SetStateAction<boolean>>;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ model }) => {
+export const CellAction: React.FC<CellActionProps> = ({
+  model,
+  setSolicitationId,
+  setOpenBlockedSolicitationModal,
+}) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
   const [openAlertDialogChangeStatus, setOpenAlertDialogChangeStatus] =
@@ -59,6 +66,16 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
     invalidateQueryKeys: ["solicitation"],
   });
 
+  const { mutateAsync: blockUnblockSolicitationAsync } = useApiMutation<
+    GenericResponse<Solicitations>
+  >({
+    endpoint: `/solicitation/blockUnblockSolicitation/${model?.id}`,
+    method: "PATCH",
+    queryKeys: ["blockUnblockSolicitation"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["solicitation"],
+  });
+
   const onConfirm = async () => {
     await deleteItemAsync(model.id as never);
     setOpen(false);
@@ -75,8 +92,78 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
     router.push(`solicitations/${model.id}/view`);
   };
 
-  const { title, description, buttonGridText, button1, button2 } =
-    updateTextDialogByStatus(model.status);
+  const {
+    title,
+    description,
+    buttonGridText,
+    button1,
+    button2,
+    iconColor,
+    textColor,
+  } = updateTextDialogByStatus(model.status);
+
+  const renderCrudButtons = () =>
+    enableButtons ? (
+      <>
+        <Separator className="mt-2 mb-2" />
+
+        <DropdownMenuItem
+          onClick={() => router.push(`/dashboard/solicitations/${model.id}`)}
+          className="cursor-pointer"
+        >
+          <IconEdit className="mr-2 h-4 w-4" /> Editar
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          onClick={() => setOpen(true)}
+          className="cursor-pointer"
+        >
+          <IconTrash color="red" className="mr-2 h-4 w-4" />{" "}
+          <span className="text-red-600">Remover</span>
+        </DropdownMenuItem>
+      </>
+    ) : (
+      <></>
+    );
+
+  const handleConfiguredBlockSolicitationModal = () => {
+    if (setOpenBlockedSolicitationModal && setSolicitationId) {
+      setOpenBlockedSolicitationModal(true);
+      setSolicitationId(model.id);
+    }
+  };
+
+  const renderBlockButton = () =>
+    model.status !== SolicitationStatus.FINALIZADO &&
+    model.status !== SolicitationStatus.BLOQUEADO ? (
+      <DropdownMenuItem
+        onClick={() => handleConfiguredBlockSolicitationModal()}
+        className="cursor-pointer"
+      >
+        <LockIcon className="mr-2 h-4 w-4" /> Bloquear solicitação
+      </DropdownMenuItem>
+    ) : (
+      <DropdownMenuItem
+        onClick={() => blockUnblockSolicitationAsync({} as never)}
+        className="cursor-pointer"
+      >
+        <UnlockIcon className="mr-2 h-4 w-4" /> Desbloquear solicitação
+      </DropdownMenuItem>
+    );
+
+  const renderChangeStatusButton = () =>
+    model.status !== SolicitationStatus.FINALIZADO &&
+    model.status !== SolicitationStatus.BLOQUEADO ? (
+      <DropdownMenuItem
+        onClick={() => setOpenAlertDialogChangeStatus(true)}
+        className="cursor-pointer"
+      >
+        <ReloadIcon color={iconColor || "gray"} className="mr-2 h-4 w-4" />{" "}
+        <span className={textColor}>{buttonGridText}</span>
+      </DropdownMenuItem>
+    ) : (
+      <></>
+    );
 
   return (
     <>
@@ -107,36 +194,18 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end">
-          {enableButtons ? (
-            <>
-              <DropdownMenuItem
-                onClick={() =>
-                  router.push(`/dashboard/solicitations/${model.id}`)
-                }
-                className="cursor-pointer"
-              >
-                <IconEdit className="mr-2 h-4 w-4" /> Editar
-              </DropdownMenuItem>
-
-              <DropdownMenuItem
-                onClick={() => setOpen(true)}
-                className="cursor-pointer"
-              >
-                <IconTrash className="mr-2 h-4 w-4" /> Remover
-              </DropdownMenuItem>
-
-              <Separator className="mt-2 mb-2" />
-            </>
-          ) : (
-            <></>
-          )}
-
           <DropdownMenuItem
-            onClick={() => setOpenAlertDialogChangeStatus(true)}
+            onClick={() => router.push(`solicitations/${model.id}/view`)}
             className="cursor-pointer"
           >
-            <ReloadIcon className="mr-2 h-4 w-4" /> {buttonGridText}
+            <EyeIcon className="mr-2 h-4 w-4" /> Visualizar
           </DropdownMenuItem>
+
+          {renderBlockButton()}
+
+          {renderCrudButtons()}
+
+          {renderChangeStatusButton()}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

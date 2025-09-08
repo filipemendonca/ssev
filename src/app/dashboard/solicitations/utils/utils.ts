@@ -23,6 +23,8 @@ export const updateTextDialogByStatus = (
   let alertDialogChangeStatusDescription = "";
   const buttonText1 = "Despachar sem conferir";
   const buttonText2 = "Conferir solicitação";
+  let colorText = "";
+  let colorIcon = "";
 
   switch (status) {
     case SolicitationStatus.CRIADO:
@@ -43,6 +45,8 @@ export const updateTextDialogByStatus = (
     case SolicitationStatus.EM_ANALISE:
       solicitationStatusChangeText = "Finalizar";
       alertDialogChangeStatusDescription = "Deseja finalizar esta solicitação?";
+      colorText = "text-green-600";
+      colorIcon = "green";
       break;
     default:
       solicitationStatusChangeText = "...";
@@ -56,5 +60,7 @@ export const updateTextDialogByStatus = (
     description: alertDialogChangeStatusDescription,
     button1: buttonText1,
     button2: buttonText2,
+    iconColor: colorIcon,
+    textColor: colorText,
   };
 };

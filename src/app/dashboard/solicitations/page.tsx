@@ -11,10 +11,13 @@ import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
+import { BlockSolicitationModal } from "./components/block-solicitation-modal";
 import { columns, Solicitations } from "./data-table/columns";
 import { SolicitationStatus } from "./types/types";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 
 export default function Page() {
+  const [solicitationId, setSolicitationId] = useState("");
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
       currentPage: 1,
@@ -22,46 +25,70 @@ export default function Page() {
     }
   );
 
+  const [openBlockedSolicitationModal, setOpenBlockedSolicitationModal] =
+    useState(false);
+
   const { data } = useApiQuery<GenericResponse<Solicitations[]>>(
     ["solicitation", paginationOptions],
     `/solicitation?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
   );
 
-  const hasNonFinalized = data?.data.some(
+  const { mutateAsync: blockUnblockSolicitationAsync } = useApiMutation<
+    GenericResponse<Solicitations>
+  >({
+    endpoint: `/solicitation/blockUnblockSolicitation/${solicitationId}`,
+    method: "PATCH",
+    queryKeys: ["blockUnblockSolicitation"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["solicitation"],
+  });
+
+  const hasNonFinalized = data?.data?.some(
     (row) => row.status !== SolicitationStatus.FINALIZADO
   );
 
-  const columnsDefinitions = columns(hasNonFinalized!);
+  const columnsDefinitions = columns(
+    hasNonFinalized!,
+    setSolicitationId,
+    setOpenBlockedSolicitationModal
+  );
 
   return (
-    <PageContainer scrollable={false}>
-      <div className="flex flex-1 flex-col space-y-4">
-        <div className="flex items-start justify-between">
-          <Heading
-            title="Solicitações"
-            description="Gerencie as solicitações."
-          />
-          <Link
-            href="/dashboard/solicitations/create"
-            className={cn(buttonVariants(), "text-xs md:text-sm")}
+    <>
+      <BlockSolicitationModal
+        isOpen={openBlockedSolicitationModal}
+        onClose={() => setOpenBlockedSolicitationModal(false)}
+        mutateAsync={blockUnblockSolicitationAsync}
+      />
+      <PageContainer scrollable={false}>
+        <div className="flex flex-1 flex-col space-y-4">
+          <div className="flex items-start justify-between">
+            <Heading
+              title="Solicitações"
+              description="Gerencie as solicitações."
+            />
+            <Link
+              href="/dashboard/solicitations/create"
+              className={cn(buttonVariants(), "text-xs md:text-sm")}
+            >
+              <IconPlus className="mr-2 h-4 w-4" /> Novo
+            </Link>
+          </div>
+          <Separator />
+          <Suspense
+            fallback={
+              <DataTableSkeleton columnCount={3} rowCount={8} filterCount={2} />
+            }
           >
-            <IconPlus className="mr-2 h-4 w-4" /> Novo
-          </Link>
+            <GenericDataDataTable
+              columns={columnsDefinitions}
+              item={data as GenericResponse<Solicitations[]>}
+              setPaginationOptions={setPaginationOptions}
+              isClicable={true}
+            />
+          </Suspense>
         </div>
-        <Separator />
-        <Suspense
-          fallback={
-            <DataTableSkeleton columnCount={3} rowCount={8} filterCount={2} />
-          }
-        >
-          <GenericDataDataTable
-            columns={columnsDefinitions}
-            item={data as GenericResponse<Solicitations[]>}
-            setPaginationOptions={setPaginationOptions}
-            isClicable={true}
-          />
-        </Suspense>
-      </div>
-    </PageContainer>
+      </PageContainer>
+    </>
   );
 }

@@ -15,16 +15,6 @@ export enum BLOOD_COLLECTION_TUBE_COLOR {
   TAMPA_AZUL = "Tampa Azul",
 }
 
-// export enum SolicitationStatus {
-//   CRIADO, // azul
-//   FILTRAGEM, // amerelo
-//   EM_TRANSPORTE, // amarelo
-//   EM_ANALISE, // amarelo
-//   BLOQUEADO, // laranja
-//   FINALIZADO, // verde
-//   CANCELADO, // vermelho
-// }
-
 export enum SolicitationStatus {
   CRIADO = "CRIADO",
   FILTRAGEM = "FILTRAGEM",
@@ -39,3 +29,23 @@ export enum ExamResultType {
   PCR_QUALITATIVO = "PCR Qualitativo",
   PCR_QUANTITATIVO = "PCR Quantitativo",
 }
+
+export const styles = {
+  CRIADO: "bg-blue-100 text-blue-800",
+  EM_ANALISE: "bg-yellow-100 text-yellow-800",
+  EM_TRANSPORTE: "bg-yellow-100 text-yellow-800",
+  FILTRAGEM: "bg-yellow-100 text-yellow-800",
+  BLOQUEADO: "bg-orange-100 text-orange-800",
+  FINALIZADO: "bg-green-100 text-green-800",
+  CANCELADO: "bg-red-100 text-red-800",
+};
+
+export const recordStatus: Record<string, string> = {
+  CRIADO: "Criado",
+  EM_ANALISE: "Em análise",
+  EM_TRANSPORTE: "Em transporte",
+  FILTRAGEM: "Filtragem",
+  BLOQUEADO: "Bloqueado",
+  FINALIZADO: "Finalizado",
+  CANCELADO: "Cancelado",
+};
