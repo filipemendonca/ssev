@@ -1,9 +1,13 @@
 "use client";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GenericResponse } from "@/types";
 import { fetcher } from "@/utils/fetcher";
+import { TabsContent } from "@radix-ui/react-tabs";
 import { useQuery } from "@tanstack/react-query";
 import { Solicitations } from "../data-table/columns";
+import { SolicitationStatus } from "../types/types";
 import SolicitationsForm from "./solicitations-form";
+import SolicitationBlocked from "./solicitation-blocked";
 
 type TUsersViewPageProps = {
   solicitationsId: string;
@@ -37,12 +41,44 @@ export default function SolicitationsViewPage({
     }
   }
 
+  const hasSolicitationBlocked =
+    data?.data?.status === SolicitationStatus.BLOQUEADO;
+
+  const hasSolicitationCanceled =
+    data?.data?.status === SolicitationStatus.CANCELADO;
+
   return (
-    <SolicitationsForm
-      isEdit={isEdit}
-      initialData={solicitations}
-      pageTitle={pageTitle}
-      isView={viewMode}
-    />
+    <Tabs defaultValue="solicitationForm">
+      <TabsList>
+        <TabsTrigger className="cursor-pointer" value="solicitationForm">
+          Cadastro
+        </TabsTrigger>
+        {hasSolicitationBlocked && (
+          <TabsTrigger className="cursor-pointer" value="blockedSolicitation">
+            Bloqueio de solicitação
+          </TabsTrigger>
+        )}
+
+        {hasSolicitationCanceled && (
+          <TabsTrigger className="cursor-pointer" value="canceledSolicitation">
+            Cancelamento de solicitação
+          </TabsTrigger>
+        )}
+      </TabsList>
+      <TabsContent value="solicitationForm">
+        <SolicitationsForm
+          isEdit={isEdit}
+          initialData={solicitations}
+          pageTitle={pageTitle}
+          isView={viewMode}
+        />
+      </TabsContent>
+      <TabsContent value="blockedSolicitation">
+        <SolicitationBlocked
+          pageTitle="Solicitação bloqueada"
+          initialData={solicitations}
+        />
+      </TabsContent>
+    </Tabs>
   );
 }

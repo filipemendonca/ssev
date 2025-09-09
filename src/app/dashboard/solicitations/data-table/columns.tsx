@@ -31,10 +31,10 @@ export type Solicitations = {
   bloodCollectionTubeColor: BLOOD_COLLECTION_TUBE_COLOR;
   status: SolicitationStatus;
   canceledAt: string;
-  canceledReason: string;
+  canceledCause: string;
   finishedAt: string;
   blockedAt: string;
-  blockedReason: string;
+  blockedCause: string;
   examResultType: ExamResultType;
   createdAt: string;
   updatedAt: string;
