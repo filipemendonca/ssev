@@ -8,6 +8,7 @@ import { Solicitations } from "../data-table/columns";
 import { SolicitationStatus } from "../types/types";
 import SolicitationsForm from "./solicitations-form";
 import SolicitationBlocked from "./solicitation-blocked";
+import SolicitationCanceled from "./solicitation-canceled";
 
 type TUsersViewPageProps = {
   solicitationsId: string;
@@ -76,6 +77,12 @@ export default function SolicitationsViewPage({
       <TabsContent value="blockedSolicitation">
         <SolicitationBlocked
           pageTitle="Solicitação bloqueada"
+          initialData={solicitations}
+        />
+      </TabsContent>
+      <TabsContent value="canceledSolicitation">
+        <SolicitationCanceled
+          pageTitle="Solicitação cancelada"
           initialData={solicitations}
         />
       </TabsContent>
