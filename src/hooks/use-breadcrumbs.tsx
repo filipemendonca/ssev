@@ -27,9 +27,24 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
     { title: "Dashboard", link: "/dashboard" },
     { title: "Usuários", link: "/dashboard/users" },
   ],
+  "/dashboard/users/:id": [
+    { title: "Dashboard", link: "/dashboard" },
+    { title: "Usuários", link: "/dashboard/users" },
+    { title: "Editar", link: "" },
+  ],
   "/dashboard/solicitations": [
     { title: "Dashboard", link: "/dashboard" },
     { title: "Solicitações", link: "/dashboard/solicitations" },
+  ],
+  "/dashboard/solicitations/:id": [
+    { title: "Dashboard", link: "/dashboard" },
+    { title: "Solicitações", link: "/dashboard/solicitations" },
+    { title: "Editar", link: "" },
+  ],
+  "/dashboard/solicitations/:id/view": [
+    { title: "Dashboard", link: "/dashboard" },
+    { title: "Solicitações", link: "/dashboard/solicitations" },
+    { title: "Visualizar", link: "" },
   ],
   // Add more custom mappings as needed
 };
@@ -38,6 +53,15 @@ export function useBreadcrumbs() {
   const pathname = usePathname();
 
   const breadcrumbs = useMemo(() => {
+    const match = Object.keys(routeMapping).find((route) => {
+      const regex = new RegExp("^" + route.replace(":id", "[^/]+") + "$");
+      return regex.test(pathname);
+    });
+
+    if (match) {
+      return routeMapping[match];
+    }
+
     // Check if we have a custom mapping for this exact path
     if (routeMapping[pathname]) {
       return routeMapping[pathname];
@@ -47,6 +71,7 @@ export function useBreadcrumbs() {
     const segments = pathname.split("/").filter(Boolean);
     return segments.map((segment, index) => {
       const path = `/${segments.slice(0, index + 1).join("/")}`;
+      console.log(segment.charAt(0).toUpperCase() + segment.slice(1));
       return {
         title: segment.charAt(0).toUpperCase() + segment.slice(1),
         link: path,

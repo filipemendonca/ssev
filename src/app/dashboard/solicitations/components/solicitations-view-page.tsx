@@ -9,6 +9,8 @@ import { SolicitationStatus } from "../types/types";
 import SolicitationsForm from "./solicitations-form";
 import SolicitationBlocked from "./solicitation-blocked";
 import SolicitationCanceled from "./solicitation-canceled";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 type TUsersViewPageProps = {
   solicitationsId: string;
@@ -19,6 +21,7 @@ export default function SolicitationsViewPage({
   solicitationsId,
   viewMode,
 }: Readonly<TUsersViewPageProps>) {
+  const router = useRouter();
   const isEdit = solicitationsId !== "create" && !viewMode;
 
   const { data } = useQuery<GenericResponse<Solicitations>>({
@@ -29,6 +32,14 @@ export default function SolicitationsViewPage({
       ),
     enabled: isEdit || viewMode,
   });
+
+  console.log(data);
+
+  useEffect(() => {
+    if (data?.statusCode === 404) {
+      router.push("/not-found");
+    }
+  }, [data, router]);
 
   const solicitations = isEdit || viewMode ? data?.data : undefined;
 
