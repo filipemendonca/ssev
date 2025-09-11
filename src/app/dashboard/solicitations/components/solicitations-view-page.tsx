@@ -33,8 +33,6 @@ export default function SolicitationsViewPage({
     enabled: isEdit || viewMode,
   });
 
-  console.log(data);
-
   useEffect(() => {
     if (data?.statusCode === 404) {
       router.push("/not-found");

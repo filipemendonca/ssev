@@ -12,37 +12,37 @@ type BreadcrumbItem = {
 const routeMapping: Record<string, BreadcrumbItem[]> = {
   "/dashboard": [{ title: "Dashboard", link: "/dashboard" }],
   "/dashboard/exams": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Exames", link: "/dashboard/exams" },
   ],
   "/dashboard/infectious-agents": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Agentes Infecciosos", link: "/dashboard/infectious-agents" },
   ],
   "/dashboard/sample": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Amostras", link: "/dashboard/sample" },
   ],
   "/dashboard/users": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Usuários", link: "/dashboard/users" },
   ],
   "/dashboard/users/:id": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Usuários", link: "/dashboard/users" },
     { title: "Editar", link: "" },
   ],
   "/dashboard/solicitations": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Solicitações", link: "/dashboard/solicitations" },
   ],
   "/dashboard/solicitations/:id": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Solicitações", link: "/dashboard/solicitations" },
     { title: "Editar", link: "" },
   ],
   "/dashboard/solicitations/:id/view": [
-    { title: "Dashboard", link: "/dashboard" },
+    { title: "Painel", link: "/dashboard" },
     { title: "Solicitações", link: "/dashboard/solicitations" },
     { title: "Visualizar", link: "" },
   ],
@@ -71,7 +71,6 @@ export function useBreadcrumbs() {
     const segments = pathname.split("/").filter(Boolean);
     return segments.map((segment, index) => {
       const path = `/${segments.slice(0, index + 1).join("/")}`;
-      console.log(segment.charAt(0).toUpperCase() + segment.slice(1));
       return {
         title: segment.charAt(0).toUpperCase() + segment.slice(1),
         link: path,

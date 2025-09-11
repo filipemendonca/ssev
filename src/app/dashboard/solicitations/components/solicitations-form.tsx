@@ -48,6 +48,7 @@ import {
   styles,
 } from "../types/types";
 import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
+import { nanoid } from "nanoid";
 
 enum GENDER {
   MACHO = "Macho",
@@ -207,6 +208,19 @@ export default function SolicitationsForm({
   useEffect(() => {
     fetchDropdownItemsData();
   }, [fetchDropdownItemsData]);
+
+  const samplesWithKey = sampleCheckboxes?.map((item) => ({
+    ...item,
+    key: nanoid(),
+  }));
+  const examsWithKey = examsCheckboxes?.map((item) => ({
+    ...item,
+    key: nanoid(),
+  }));
+  const infectiousAgentsWithKey = infectiousAgentsCheckboxes?.map((item) => ({
+    ...item,
+    key: nanoid(),
+  }));
 
   const toggleCheck = (id: string, value: boolean) => {
     setSampleCheckboxes((prev) =>
@@ -537,9 +551,9 @@ export default function SolicitationsForm({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {sampleCheckboxes?.map((sample) => (
+                  {samplesWithKey?.map((sample) => (
                     <div
-                      key={sample.id}
+                      key={sample.key}
                       className="flex items-center space-x-2"
                     >
                       <Checkbox
@@ -564,8 +578,11 @@ export default function SolicitationsForm({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {examsCheckboxes?.map((exams) => (
-                    <div key={exams.id} className="flex items-center space-x-2">
+                  {examsWithKey?.map((exams) => (
+                    <div
+                      key={exams.key}
+                      className="flex items-center space-x-2"
+                    >
                       <Checkbox
                         id={exams.id}
                         checked={exams.checked}
@@ -590,9 +607,9 @@ export default function SolicitationsForm({
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {infectiousAgentsCheckboxes?.map((infectiousAgents) => (
+                  {infectiousAgentsWithKey?.map((infectiousAgents) => (
                     <div
-                      key={infectiousAgents.id}
+                      key={infectiousAgents.key}
                       className="flex items-center space-x-2"
                     >
                       <Checkbox
