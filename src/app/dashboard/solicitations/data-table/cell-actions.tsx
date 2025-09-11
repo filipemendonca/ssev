@@ -16,7 +16,7 @@ import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
 import { GenericResponse } from "@/types";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-import { EyeIcon, LockIcon, UnlockIcon } from "lucide-react";
+import { CircleX, EyeIcon, LockIcon, UnlockIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { SolicitationStatus } from "../types/types";
@@ -27,12 +27,14 @@ interface CellActionProps {
   model: Solicitations;
   setSolicitationId?: Dispatch<SetStateAction<string>>;
   setOpenBlockedSolicitationModal?: Dispatch<SetStateAction<boolean>>;
+  setOpenCanceledSolicitationModal?: Dispatch<SetStateAction<boolean>>;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
   model,
   setSolicitationId,
   setOpenBlockedSolicitationModal,
+  setOpenCanceledSolicitationModal,
 }) => {
   const [loading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -103,7 +105,9 @@ export const CellAction: React.FC<CellActionProps> = ({
   } = updateTextDialogByStatus(model.status);
 
   const renderCrudButtons = () =>
-    enableButtons ? (
+    enableButtons &&
+    model.status !== SolicitationStatus.CANCELADO &&
+    model.status !== SolicitationStatus.FINALIZADO ? (
       <>
         <Separator className="mt-2 mb-2" />
 
@@ -133,8 +137,14 @@ export const CellAction: React.FC<CellActionProps> = ({
     }
   };
 
-  const renderBlockButton = () =>
-    model.status !== SolicitationStatus.FINALIZADO &&
+  const handleConfigureCancelSolicitationModal = () => {
+    if (setOpenCanceledSolicitationModal && setSolicitationId) {
+      setOpenCanceledSolicitationModal(true);
+      setSolicitationId(model.id);
+    }
+  };
+
+  const isBlockedSolicitationStatus = () =>
     model.status !== SolicitationStatus.BLOQUEADO ? (
       <DropdownMenuItem
         onClick={() => handleConfiguredBlockSolicitationModal()}
@@ -151,9 +161,31 @@ export const CellAction: React.FC<CellActionProps> = ({
       </DropdownMenuItem>
     );
 
+  const renderBlockButton = () =>
+    model.status === SolicitationStatus.FINALIZADO ||
+    model.status === SolicitationStatus.CANCELADO ? (
+      <></>
+    ) : (
+      isBlockedSolicitationStatus()
+    );
+
+  const renderCancelSolicitation = () =>
+    model.status !== SolicitationStatus.CANCELADO &&
+    model.status !== SolicitationStatus.FINALIZADO ? (
+      <DropdownMenuItem
+        onClick={() => handleConfigureCancelSolicitationModal()}
+        className="cursor-pointer"
+      >
+        <CircleX className="mr-2 h-4 w-4" /> Cancelar solicitação
+      </DropdownMenuItem>
+    ) : (
+      <></>
+    );
+
   const renderChangeStatusButton = () =>
     model.status !== SolicitationStatus.FINALIZADO &&
-    model.status !== SolicitationStatus.BLOQUEADO ? (
+    model.status !== SolicitationStatus.BLOQUEADO &&
+    model.status !== SolicitationStatus.CANCELADO ? (
       <DropdownMenuItem
         onClick={() => setOpenAlertDialogChangeStatus(true)}
         className="cursor-pointer"
@@ -202,6 +234,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           </DropdownMenuItem>
 
           {renderBlockButton()}
+          {renderCancelSolicitation()}
 
           {renderCrudButtons()}
 

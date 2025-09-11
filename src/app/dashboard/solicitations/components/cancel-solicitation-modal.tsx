@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Solicitations } from "../data-table/columns";
 
-interface BlockSolicitationModalProps {
+interface CancelSolicitationModalProps {
   isOpen: boolean;
   onClose: () => void;
   mutateAsync: UseMutateAsyncFunction<
@@ -30,21 +30,21 @@ interface BlockSolicitationModalProps {
 }
 
 const formSchema = z.object({
-  blockedCause: z.string().min(1, "O campo causa do bloqueio é obrigatório"),
+  canceledCause: z
+    .string()
+    .min(1, "O campo causa do cancelamento é obrigatório"),
 });
 
-type BlockSolicitationModalForm = z.infer<typeof formSchema>;
+type CancelSolicitationModalForm = z.infer<typeof formSchema>;
 
-export const BlockSolicitationModal: React.FC<BlockSolicitationModalProps> = ({
-  isOpen,
-  onClose,
-  mutateAsync,
-}) => {
+export const CancelSolicitationModal: React.FC<
+  CancelSolicitationModalProps
+> = ({ isOpen, onClose, mutateAsync }) => {
   const [isMounted, setIsMounted] = useState(false);
 
-  const form = useForm<BlockSolicitationModalForm>({
+  const form = useForm<CancelSolicitationModalForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: { blockedCause: "" },
+    defaultValues: { canceledCause: "" },
   });
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export const BlockSolicitationModal: React.FC<BlockSolicitationModalProps> = ({
 
   return (
     <Modal
-      title="Bloqueio de Solicitação"
+      title="Cancelamento de Solicitação"
       isOpen={isOpen}
       onClose={onClose}
       className="max-w-2xl"
@@ -77,13 +77,13 @@ export const BlockSolicitationModal: React.FC<BlockSolicitationModalProps> = ({
           >
             <FormField
               control={form.control}
-              name="blockedCause"
+              name="canceledCause"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Causa do Bloqueio</FormLabel>
+                  <FormLabel>Causa do Cancelamento</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Defina aqui a causa do bloqueio..."
+                      placeholder="Defina aqui a causa do cancelamento..."
                       autoComplete="off"
                       {...field}
                     />
@@ -93,8 +93,12 @@ export const BlockSolicitationModal: React.FC<BlockSolicitationModalProps> = ({
               )}
             />
             <div className="flex w-full items-center justify-end space-x-2 pt-6">
-              <Button type="submit" className="cursor-pointer">
-                Continuar
+              <Button
+                type="submit"
+                variant="destructive"
+                className="cursor-pointer"
+              >
+                Cancelar Solicitacão
               </Button>
             </div>
           </form>

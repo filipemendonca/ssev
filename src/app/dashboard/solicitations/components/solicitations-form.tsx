@@ -281,31 +281,11 @@ export default function SolicitationsForm({
     }
   };
 
-  // const renderBlockSolicitationButton = () =>
-  //   initialData && initialData?.status !== SolicitationStatus.FINALIZADO ? (
-  //     <Button
-  //       type="submit"
-  //       className="cursor-pointer mr-2"
-  //       onClick={() => {}}
-  //       variant="warning"
-  //     >
-  //       {initialData?.status === SolicitationStatus.BLOQUEADO ? (
-  //         <UnlockIcon className="mr-2 h-4 w-4" />
-  //       ) : (
-  //         <LockIcon className="mr-2 h-4 w-4" />
-  //       )}{" "}
-  //       {initialData?.status === SolicitationStatus.BLOQUEADO
-  //         ? "Desbloquear solicitação"
-  //         : "Bloquear solicitação"}
-  //     </Button>
-  //   ) : (
-  //     <></>
-  //   );
-
   const renderChangeStatusButton = () =>
     initialData &&
-    initialData?.status !== SolicitationStatus.FINALIZADO &&
-    initialData.status !== SolicitationStatus.BLOQUEADO ? (
+    initialData.status !== SolicitationStatus.FINALIZADO &&
+    initialData.status !== SolicitationStatus.BLOQUEADO &&
+    initialData.status !== SolicitationStatus.CANCELADO ? (
       <Button
         type="button"
         className="cursor-pointer"
@@ -323,14 +303,7 @@ export default function SolicitationsForm({
     );
 
   const renderButtonChangeStatus = () =>
-    isView ? (
-      <div>
-        {/* {renderBlockSolicitationButton()} */}
-        {renderChangeStatusButton()}
-      </div>
-    ) : (
-      <></>
-    );
+    isView ? renderChangeStatusButton() : <></>;
 
   const renderStatusBadge = () =>
     isView && initialData ? (

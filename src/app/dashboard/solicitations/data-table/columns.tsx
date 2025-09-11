@@ -43,7 +43,8 @@ export type Solicitations = {
 export const columns = (
   shouldShowActions: boolean,
   setSolicitationId?: Dispatch<SetStateAction<string>>,
-  setOpenBlockedSolicitationModal?: Dispatch<SetStateAction<boolean>>
+  setOpenBlockedSolicitationModal?: Dispatch<SetStateAction<boolean>>,
+  setOpenCanceledSolicitationModal?: Dispatch<SetStateAction<boolean>>
 ): ColumnDef<Solicitations>[] => {
   const baseColumns: ColumnDef<Solicitations>[] = [
     {
@@ -102,6 +103,7 @@ export const columns = (
         <CellAction
           model={row.original}
           setOpenBlockedSolicitationModal={setOpenBlockedSolicitationModal}
+          setOpenCanceledSolicitationModal={setOpenCanceledSolicitationModal}
           setSolicitationId={setSolicitationId}
         />
       ),

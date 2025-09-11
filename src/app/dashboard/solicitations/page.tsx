@@ -15,6 +15,7 @@ import { BlockSolicitationModal } from "./components/block-solicitation-modal";
 import { columns, Solicitations } from "./data-table/columns";
 import { SolicitationStatus } from "./types/types";
 import { useApiMutation } from "@/hooks/use-api-mutation";
+import { CancelSolicitationModal } from "./components/cancel-solicitation-modal";
 
 export default function Page() {
   const [solicitationId, setSolicitationId] = useState("");
@@ -26,6 +27,8 @@ export default function Page() {
   );
 
   const [openBlockedSolicitationModal, setOpenBlockedSolicitationModal] =
+    useState(false);
+  const [openCanceledSolicitationModal, setOpenCanceledSolicitationModal] =
     useState(false);
 
   const { data } = useApiQuery<GenericResponse<Solicitations[]>>(
@@ -43,6 +46,16 @@ export default function Page() {
     invalidateQueryKeys: ["solicitation"],
   });
 
+  const { mutateAsync: cancelSolicitationAsync } = useApiMutation<
+    GenericResponse<Solicitations>
+  >({
+    endpoint: `/solicitation/cancelSolicitation/${solicitationId}`,
+    method: "PATCH",
+    queryKeys: ["cancelSolicitation"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["solicitation"],
+  });
+
   const hasNonFinalized = data?.data?.some(
     (row) => row.status !== SolicitationStatus.FINALIZADO
   );
@@ -50,7 +63,8 @@ export default function Page() {
   const columnsDefinitions = columns(
     hasNonFinalized!,
     setSolicitationId,
-    setOpenBlockedSolicitationModal
+    setOpenBlockedSolicitationModal,
+    setOpenCanceledSolicitationModal
   );
 
   return (
@@ -59,6 +73,11 @@ export default function Page() {
         isOpen={openBlockedSolicitationModal}
         onClose={() => setOpenBlockedSolicitationModal(false)}
         mutateAsync={blockUnblockSolicitationAsync}
+      />
+      <CancelSolicitationModal
+        isOpen={openCanceledSolicitationModal}
+        onClose={() => setOpenCanceledSolicitationModal(false)}
+        mutateAsync={cancelSolicitationAsync}
       />
       <PageContainer scrollable={false}>
         <div className="flex flex-1 flex-col space-y-4">
