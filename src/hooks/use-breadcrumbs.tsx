@@ -10,7 +10,7 @@ type BreadcrumbItem = {
 
 // This allows to add custom title as well
 const routeMapping: Record<string, BreadcrumbItem[]> = {
-  "/dashboard": [{ title: "Dashboard", link: "/dashboard" }],
+  "/dashboard": [{ title: "Painel", link: "/dashboard" }],
   "/dashboard/exams": [
     { title: "Painel", link: "/dashboard" },
     { title: "Exames", link: "/dashboard/exams" },
@@ -27,6 +27,11 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
     { title: "Painel", link: "/dashboard" },
     { title: "Usuários", link: "/dashboard/users" },
   ],
+  "/dashboard/users/create": [
+    { title: "Painel", link: "/dashboard" },
+    { title: "Usuários", link: "/dashboard/users" },
+    { title: "Novo", link: "" },
+  ],
   "/dashboard/users/:id": [
     { title: "Painel", link: "/dashboard" },
     { title: "Usuários", link: "/dashboard/users" },
@@ -35,6 +40,11 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
   "/dashboard/solicitations": [
     { title: "Painel", link: "/dashboard" },
     { title: "Solicitações", link: "/dashboard/solicitations" },
+  ],
+  "/dashboard/solicitations/create": [
+    { title: "Painel", link: "/dashboard" },
+    { title: "Solicitações", link: "/dashboard/solicitations" },
+    { title: "Novo", link: "" },
   ],
   "/dashboard/solicitations/:id": [
     { title: "Painel", link: "/dashboard" },

@@ -34,10 +34,10 @@ export default function SolicitationsViewPage({
   });
 
   useEffect(() => {
-    if (data?.statusCode === 404) {
+    if (data?.statusCode === 404 && solicitationsId !== "create") {
       router.push("/not-found");
     }
-  }, [data, router]);
+  }, [data, router, solicitationsId]);
 
   const solicitations = isEdit || viewMode ? data?.data : undefined;
 
