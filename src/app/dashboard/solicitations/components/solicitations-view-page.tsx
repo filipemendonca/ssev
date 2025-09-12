@@ -4,13 +4,13 @@ import { GenericResponse } from "@/types";
 import { fetcher } from "@/utils/fetcher";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { useQuery } from "@tanstack/react-query";
-import { Solicitations } from "../data-table/columns";
-import { SolicitationStatus } from "../types/types";
-import SolicitationsForm from "./solicitations-form";
-import SolicitationBlocked from "./solicitation-blocked";
-import SolicitationCanceled from "./solicitation-canceled";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Solicitations } from "../data-table/columns";
+import { SolicitationStatus } from "../types/types";
+import SolicitationBlocked from "./solicitation-blocked";
+import SolicitationCanceled from "./solicitation-canceled";
+import SolicitationsForm from "./solicitations-form";
 
 type TUsersViewPageProps = {
   solicitationsId: string;
@@ -28,7 +28,7 @@ export default function SolicitationsViewPage({
     queryKey: ["getSolicitationsById", solicitationsId],
     queryFn: () =>
       fetcher<GenericResponse<Solicitations>>(
-        `/solicitation/${solicitationsId}`
+        `/solicitation/${solicitationsId}?isViewMode=${viewMode ?? false}`
       ),
     enabled: isEdit || viewMode,
   });
@@ -37,6 +37,7 @@ export default function SolicitationsViewPage({
     if (data?.statusCode === 404 && solicitationsId !== "create") {
       router.push("/not-found");
     }
+    if (data?.statusCode === 403) router.push("/forbidden");
   }, [data, router, solicitationsId]);
 
   const solicitations = isEdit || viewMode ? data?.data : undefined;
