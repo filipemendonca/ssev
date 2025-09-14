@@ -25,14 +25,15 @@ import { cn } from "@/lib/utils";
 import { GenericResponse } from "@/types";
 import { fetcher } from "@/utils/fetcher";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { IconArrowLeft } from "@tabler/icons-react";
-import { SaveAll } from "lucide-react";
+import { CheckIcon, SaveAll } from "lucide-react";
+import { nanoid } from "nanoid";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useConfigureButtonToSolicitations } from "../../../../hooks/use-configure-buttons-to-solicitation";
 import { Exams } from "../../exams/data-table/columns";
 import { InfectiousAgents } from "../../infectious-agents/data-table/columns";
 import { Sample } from "../../sample/data-table/columns";
@@ -48,7 +49,6 @@ import {
   styles,
 } from "../types/types";
 import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
-import { nanoid } from "nanoid";
 
 enum GENDER {
   MACHO = "Macho",
@@ -121,6 +121,10 @@ export default function SolicitationsForm({
 }: Readonly<SolicitationsFormProps>) {
   const route = useRouter();
   const { user } = useUserStore();
+  const { enableChangeStatus } = useConfigureButtonToSolicitations(
+    initialData ? initialData.status : SolicitationStatus.CRIADO,
+    user ? user.role : null
+  );
   const [sampleCheckboxes, setSampleCheckboxes] = useState<SampleWithCheck[]>(
     initialData?.samples as []
   );
@@ -296,10 +300,7 @@ export default function SolicitationsForm({
   };
 
   const renderChangeStatusButton = () =>
-    initialData &&
-    initialData.status !== SolicitationStatus.FINALIZADO &&
-    initialData.status !== SolicitationStatus.BLOQUEADO &&
-    initialData.status !== SolicitationStatus.CANCELADO ? (
+    initialData && enableChangeStatus && buttonGridText !== undefined ? (
       <Button
         type="button"
         className="cursor-pointer"
@@ -310,7 +311,7 @@ export default function SolicitationsForm({
             : "default"
         }
       >
-        <ReloadIcon className="mr-2 h-4 w-4" /> {buttonGridText}
+        <CheckIcon className="mr-2 h-4 w-4" /> {buttonGridText}
       </Button>
     ) : (
       <></>

@@ -23,6 +23,8 @@ import { SolicitationStatus } from "../types/types";
 import { LockIcon, UnlockIcon } from "lucide-react";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { GenericResponse } from "@/types";
+import { useUserStore } from "@/context/stores/user.store";
+import { useConfigureButtonToSolicitations } from "@/hooks/use-configure-buttons-to-solicitation";
 
 const formSchema = z.object({
   blockedCause: z.string(),
@@ -39,6 +41,12 @@ export default function SolicitationBlocked({
   initialData,
   pageTitle,
 }: Readonly<SolicitationBlockedProps>) {
+  const { user } = useUserStore();
+  const status = initialData ? initialData.status : null;
+  const { enableBlockSolicitationButton } = useConfigureButtonToSolicitations(
+    status,
+    user ? user.role : null
+  );
   const form = useForm<blockForm>({
     resolver: zodResolver(formSchema),
     defaultValues: { blockedCause: initialData?.blockedCause || "" },
@@ -60,7 +68,7 @@ export default function SolicitationBlocked({
   };
 
   const renderBlockSolicitationButton = () =>
-    initialData && initialData?.status !== SolicitationStatus.FINALIZADO ? (
+    initialData && enableBlockSolicitationButton ? (
       <Button
         type="submit"
         className="cursor-pointer mr-2"

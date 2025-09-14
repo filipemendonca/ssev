@@ -18,9 +18,9 @@ export const changeToNextStatus = (status: SolicitationStatus) => {
 export const updateTextDialogByStatus = (
   status: SolicitationStatus | undefined
 ) => {
-  let solicitationStatusChangeText = "";
+  let solicitationStatusChangeText: string | undefined = "";
   const alertDialogChangeStatusTitle = "Despachar essa solicitação?";
-  let alertDialogChangeStatusDescription = "";
+  let alertDialogChangeStatusDescription: string | undefined = "";
   const buttonText1 = "Despachar sem conferir";
   const buttonText2 = "Conferir solicitação";
   let colorText = "";
@@ -49,8 +49,8 @@ export const updateTextDialogByStatus = (
       colorIcon = "green";
       break;
     default:
-      solicitationStatusChangeText = "...";
-      alertDialogChangeStatusDescription = "...";
+      solicitationStatusChangeText = undefined;
+      alertDialogChangeStatusDescription = undefined;
       break;
   }
 

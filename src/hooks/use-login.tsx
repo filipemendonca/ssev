@@ -103,6 +103,8 @@ async function logoutUser() {
     }
   );
 
+  localStorage.removeItem("_e");
+
   if (!res.ok) throw new Error("Erro ao fazer logout");
 
   return res.json();

@@ -10,15 +10,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { useUserStore } from "@/context/stores/user.store";
-import { ROLE } from "@/enum/role.enum";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useApiMutationDelete } from "@/hooks/use-api-mutation-delete";
 import { GenericResponse } from "@/types";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
-import { CircleX, EyeIcon, LockIcon, UnlockIcon } from "lucide-react";
+import {
+  CheckIcon,
+  CircleX,
+  EyeIcon,
+  LockIcon,
+  UnlockIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
+import { useConfigureButtonToSolicitations } from "../../../../hooks/use-configure-buttons-to-solicitation";
 import { SolicitationStatus } from "../types/types";
 import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
 import { Solicitations } from "./columns";
@@ -42,11 +47,12 @@ export const CellAction: React.FC<CellActionProps> = ({
     useState(false);
   const router = useRouter();
   const { user } = useUserStore();
-
-  const enableButtons =
-    user?.role === ROLE.ADMINISTRADOR ||
-    (user?.role === ROLE.VETERINARIO &&
-      model.status === SolicitationStatus.CRIADO);
+  const {
+    enableChangeStatus,
+    enableCrudButtons,
+    enableBlockSolicitationButton,
+    enableCancelSolicitationButton,
+  } = useConfigureButtonToSolicitations(model.status, user ? user.role : null);
 
   const { deleteItemAsync } = useApiMutationDelete<
     GenericResponse<Solicitations>
@@ -105,9 +111,7 @@ export const CellAction: React.FC<CellActionProps> = ({
   } = updateTextDialogByStatus(model.status);
 
   const renderCrudButtons = () =>
-    enableButtons &&
-    model.status !== SolicitationStatus.CANCELADO &&
-    model.status !== SolicitationStatus.FINALIZADO ? (
+    enableCrudButtons ? (
       <>
         <Separator className="mt-2 mb-2" />
 
@@ -162,16 +166,10 @@ export const CellAction: React.FC<CellActionProps> = ({
     );
 
   const renderBlockButton = () =>
-    model.status === SolicitationStatus.FINALIZADO ||
-    model.status === SolicitationStatus.CANCELADO ? (
-      <></>
-    ) : (
-      isBlockedSolicitationStatus()
-    );
+    enableBlockSolicitationButton ? isBlockedSolicitationStatus() : <></>;
 
   const renderCancelSolicitation = () =>
-    model.status !== SolicitationStatus.CANCELADO &&
-    model.status !== SolicitationStatus.FINALIZADO ? (
+    enableCancelSolicitationButton ? (
       <DropdownMenuItem
         onClick={() => handleConfigureCancelSolicitationModal()}
         className="cursor-pointer"
@@ -183,14 +181,12 @@ export const CellAction: React.FC<CellActionProps> = ({
     );
 
   const renderChangeStatusButton = () =>
-    model.status !== SolicitationStatus.FINALIZADO &&
-    model.status !== SolicitationStatus.BLOQUEADO &&
-    model.status !== SolicitationStatus.CANCELADO ? (
+    enableChangeStatus && buttonGridText !== undefined ? (
       <DropdownMenuItem
         onClick={() => setOpenAlertDialogChangeStatus(true)}
         className="cursor-pointer"
       >
-        <ReloadIcon color={iconColor || "gray"} className="mr-2 h-4 w-4" />{" "}
+        <CheckIcon color={iconColor || "gray"} className="mr-2 h-4 w-4" />{" "}
         <span className={textColor}>{buttonGridText}</span>
       </DropdownMenuItem>
     ) : (
@@ -214,7 +210,7 @@ export const CellAction: React.FC<CellActionProps> = ({
         onClickButton2={onClickButton2GenericModal}
         loading={loading}
         title={title}
-        description={description}
+        description={description ?? ""}
         buttonText1={button1}
         buttonText2={button2}
       />
@@ -235,9 +231,7 @@ export const CellAction: React.FC<CellActionProps> = ({
 
           {renderBlockButton()}
           {renderCancelSolicitation()}
-
           {renderCrudButtons()}
-
           {renderChangeStatusButton()}
         </DropdownMenuContent>
       </DropdownMenu>
