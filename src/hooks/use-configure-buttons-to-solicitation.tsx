@@ -37,6 +37,23 @@ function configurePerStatus(
       });
     case SolicitationStatus.BLOQUEADO:
     case SolicitationStatus.EM_TRANSPORTE:
+      if (userRole === ROLE.ADMINISTRADOR || userRole === ROLE.PATOLOGISTA) {
+        return configurePerRole({
+          enableChangeStatus: true,
+          enableCrudButtons: true,
+          enableBlockSolicitationButton: true,
+          enableCancelSolicitationButton: true,
+        });
+      }
+      if (userRole === ROLE.VETERINARIO) {
+        return configurePerRole({
+          enableChangeStatus: false,
+          enableCrudButtons: true,
+          enableBlockSolicitationButton: true,
+          enableCancelSolicitationButton: false,
+        });
+      }
+      break;
     case SolicitationStatus.EM_ANALISE:
       if (userRole === ROLE.ADMINISTRADOR || userRole === ROLE.PATOLOGISTA) {
         return configurePerRole({
