@@ -1,6 +1,6 @@
 import { Timeline, TimelineItem } from "@/components/timeline";
 import { SolicitationHistoryDTO } from "../dto/solicitation.history.dto";
-import { recordStatus } from "../types/types";
+import { recordStatus, SolicitationStatus } from "../types/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SolicitationHistoryTimelineProps {
@@ -30,12 +30,16 @@ export default function SolicitationHistoryTimeline({
           {data?.map((item) => (
             <TimelineItem
               key={item.id}
-              date={new Date(item.changedAt).toLocaleDateString()}
+              solicitationStatus={item.newStatus as SolicitationStatus}
+              date={new Date(item.changedAt).toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
               title={renderTitle(item)}
               description={`Modificado por: ${item.changedBy?.name || ""}`}
-              // icon={<Check />}
-              status="completed"
-              iconColor="primary"
             />
           ))}
         </Timeline>

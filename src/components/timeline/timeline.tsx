@@ -1,10 +1,11 @@
 "use client";
 
-import * as React from "react";
+import { SolicitationStatus } from "@/app/dashboard/solicitations/types/types";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { HTMLMotionProps, motion } from "framer-motion";
 import { AlertCircle, Loader2 } from "lucide-react";
+import * as React from "react";
 import type { TimelineColor } from "./types";
 
 const timelineVariants = cva("flex flex-col relative", {
@@ -104,6 +105,8 @@ interface TimelineItemProps extends Omit<HTMLMotionProps<"li">, "ref"> {
   loading?: boolean;
   /** Error message */
   error?: string;
+  /** Solicitation status to determine icon color */
+  solicitationStatus?: SolicitationStatus;
 }
 
 const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
@@ -128,6 +131,7 @@ const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
       animate,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       transition,
+      solicitationStatus,
       ...props
     },
     ref
@@ -227,6 +231,7 @@ const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
         <div className="flex flex-col items-center">
           <div className="relative z-10">
             <TimelineIcon
+              solicitationStatus={solicitationStatus}
               icon={icon}
               color={iconColor}
               status={status}
@@ -378,7 +383,7 @@ const TimelineTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "font-semibold leading-none tracking-tight text-secondary-foreground",
+      "font-normal leading-none tracking-tight text-secondary-foreground",
       className
     )}
     {...props}
@@ -390,11 +395,13 @@ TimelineTitle.displayName = "TimelineTitle";
 
 const TimelineIcon = ({
   icon,
-  color = "primary",
-  // status = "completed",
+  solicitationStatus,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  status = "completed",
   iconSize = "md",
 }: {
   icon?: React.ReactNode;
+  solicitationStatus?: SolicitationStatus;
   color?: "primary" | "secondary" | "muted" | "accent" | "destructive";
   status?: "completed" | "in-progress" | "pending" | "error";
   iconSize?: "sm" | "md" | "lg";
@@ -411,20 +418,24 @@ const TimelineIcon = ({
     lg: "h-6 w-6",
   };
 
-  const colorClasses = {
-    primary: "bg-primary text-primary-foreground",
-    secondary: "bg-secondary text-secondary-foreground",
-    muted: "bg-muted text-muted-foreground",
-    accent: "bg-accent text-accent-foreground",
-    destructive: "bg-destructive text-destructive-foreground",
+  const solicitationStatusColorClasses = {
+    CRIADO: "bg-blue-400",
+    EM_ANALISE: "bg-yellow-400",
+    EM_TRANSPORTE: "bg-yellow-400",
+    FILTRAGEM: "bg-yellow-400",
+    BLOQUEADO: "bg-orange-400",
+    FINALIZADO: "bg-green-400",
+    CANCELADO: "bg-red-400",
   };
 
   return (
     <div
       className={cn(
-        "relative flex items-center justify-center rounded-full ring-8 ring-background shadow-sm",
-        sizeClasses[iconSize],
-        colorClasses[color]
+        "relative flex items-center justify-center rounded-full ring-8 ring-background shadow-sm bg-orange-100 text-orange-800",
+        solicitationStatusColorClasses[
+          solicitationStatus as keyof typeof solicitationStatusColorClasses
+        ],
+        sizeClasses[iconSize]
       )}
     >
       {icon ? (
@@ -488,13 +499,13 @@ TimelineEmpty.displayName = "TimelineEmpty";
 
 export {
   Timeline,
-  TimelineItem,
   TimelineConnector,
-  TimelineHeader,
-  TimelineTitle,
-  TimelineIcon,
-  TimelineDescription,
   TimelineContent,
-  TimelineTime,
+  TimelineDescription,
   TimelineEmpty,
+  TimelineHeader,
+  TimelineIcon,
+  TimelineItem,
+  TimelineTime,
+  TimelineTitle,
 };
