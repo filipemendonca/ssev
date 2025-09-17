@@ -11,6 +11,8 @@ import { SolicitationStatus } from "../types/types";
 import SolicitationBlocked from "./solicitation-blocked";
 import SolicitationCanceled from "./solicitation-canceled";
 import SolicitationsForm from "./solicitations-form";
+import SolicitationHistoryTimeline from "./solicitation-history-timeline";
+import { SolicitationHistoryDTO } from "../dto/solicitation.history.dto";
 
 type TUsersViewPageProps = {
   solicitationsId: string;
@@ -31,6 +33,15 @@ export default function SolicitationsViewPage({
         `/solicitation/${solicitationsId}?isViewMode=${viewMode ?? false}`
       ),
     enabled: isEdit || viewMode,
+  });
+
+  const { data: solicitationHistoryData } = useQuery<SolicitationHistoryDTO[]>({
+    queryKey: ["getSolicitationsHistoryById", solicitationsId],
+    queryFn: () =>
+      fetcher<SolicitationHistoryDTO[]>(
+        `/solicitationHistory/${solicitationsId}`
+      ),
+    enabled: solicitationsId !== "create" && !!solicitationsId,
   });
 
   useEffect(() => {
@@ -64,6 +75,9 @@ export default function SolicitationsViewPage({
         <TabsTrigger className="cursor-pointer" value="solicitationForm">
           Cadastro
         </TabsTrigger>
+        <TabsTrigger className="cursor-pointer" value="solicitationHistory">
+          Histórico
+        </TabsTrigger>
         {hasSolicitationBlocked && (
           <TabsTrigger className="cursor-pointer" value="blockedSolicitation">
             Bloqueio de solicitação
@@ -83,6 +97,9 @@ export default function SolicitationsViewPage({
           pageTitle={pageTitle}
           isView={viewMode}
         />
+      </TabsContent>
+      <TabsContent value="solicitationHistory">
+        <SolicitationHistoryTimeline data={solicitationHistoryData} />
       </TabsContent>
       <TabsContent value="blockedSolicitation">
         <SolicitationBlocked
