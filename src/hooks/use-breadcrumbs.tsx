@@ -15,6 +15,20 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
     { title: "Painel", link: "/dashboard" },
     { title: "Exames", link: "/dashboard/exams" },
   ],
+  "/dashboard/examsResultTemplate": [
+    { title: "Painel", link: "/dashboard" },
+    { title: "Template de Exames", link: "/dashboard/examsResultTemplate" },
+  ],
+  "/dashboard/examsResultTemplate/create": [
+    { title: "Painel", link: "/dashboard" },
+    { title: "Template de Exames", link: "/dashboard/examsResultTemplate" },
+    { title: "Novo", link: "" },
+  ],
+  "/dashboard/examsResultTemplate/:id": [
+    { title: "Painel", link: "/dashboard" },
+    { title: "Template de Exames", link: "/dashboard/examsResultTemplate" },
+    { title: "Editar", link: "" },
+  ],
   "/dashboard/infectious-agents": [
     { title: "Painel", link: "/dashboard" },
     { title: "Agentes Infecciosos", link: "/dashboard/infectious-agents" },
