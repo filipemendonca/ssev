@@ -75,9 +75,11 @@ export default function SolicitationsViewPage({
         <TabsTrigger className="cursor-pointer" value="solicitationForm">
           Cadastro
         </TabsTrigger>
-        <TabsTrigger className="cursor-pointer" value="solicitationHistory">
-          Histórico
-        </TabsTrigger>
+        {solicitationsId !== "create" && (
+          <TabsTrigger className="cursor-pointer" value="solicitationHistory">
+            Histórico
+          </TabsTrigger>
+        )}
         {hasSolicitationBlocked && (
           <TabsTrigger className="cursor-pointer" value="blockedSolicitation">
             Bloqueio de solicitação
