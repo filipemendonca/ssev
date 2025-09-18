@@ -39,7 +39,6 @@ import { InfectiousAgents } from "../../infectious-agents/data-table/columns";
 import { Sample } from "../../sample/data-table/columns";
 import { Solicitations } from "../data-table/columns";
 import {
-  BLOOD_COLLECTION_TUBE_COLOR,
   ExamResultType,
   ExamsWithCheck,
   InfectiousAgentsWithCheck,
@@ -54,6 +53,18 @@ enum GENDER {
   MACHO = "Macho",
   FEMEA = "Fêmea",
 }
+
+const BLOOD_COLLECTION_TUBE_COLOR_ARRAY = [
+  { id: "TAMPA_ROXA", name: "Tampa Roxa", checked: false, key: nanoid() },
+  {
+    id: "TAMPA_VERMELHA",
+    name: "Tampa Vermelha",
+    checked: false,
+    key: nanoid(),
+  },
+  { id: "TAMPA_CINZA", name: "Tampa Cinza", checked: false, key: nanoid() },
+  { id: "TAMPA_AZUL", name: "Tampa Azul", checked: false, key: nanoid() },
+];
 
 const formSchema = z.object({
   tutor: z.string().min(1, {
@@ -76,21 +87,21 @@ const formSchema = z.object({
   }),
   samples: z.array(
     z.string().min(1, {
-      message: "O campo Amostra é obrigatório.",
+      message: "Escolha ao menos uma amostra.",
     })
   ),
   exams: z.array(
     z.string().min(1, {
-      message: "O campo Exame é obrigatório.",
+      message: "Escolha ao menos um exame.",
     })
   ),
   infectiousAgents: z.array(
     z.string().min(1, {
-      message: "Selecione pelo menos um agente infeccioso.",
+      message: "Escolha ao menos um agente infeccioso.",
     })
   ),
   gender: z.enum(Object.values(GENDER) as [string, ...string[]], {
-    message: "Selecione um gênero.",
+    message: "Selecione o gênero.",
   }),
   examResultType: z.enum(
     Object.values(ExamResultType) as [string, ...string[]],
@@ -98,11 +109,10 @@ const formSchema = z.object({
       message: "Selecione o tipo do exame.",
     }
   ),
-  bloodCollectionTubeColor: z.enum(
-    Object.values(BLOOD_COLLECTION_TUBE_COLOR) as [string, ...string[]],
-    {
-      message: "Selecione uma cor do tubo de coleta de sangue.",
-    }
+  bloodCollectionTubeColor: z.array(
+    z.string().min(1, {
+      message: "Escolha ao menos uma cor do tubo de coleta de sangue.",
+    })
   ),
 });
 
@@ -134,6 +144,10 @@ export default function SolicitationsForm({
   const [infectiousAgentsCheckboxes, setInfectiousAgentsCheckboxes] = useState<
     InfectiousAgentsWithCheck[]
   >(initialData?.infectiousAgents as []);
+  const [
+    bloodCollectionTubeColorCheckboxes,
+    setBloodCollectionTubeColorCheckboxes,
+  ] = useState(BLOOD_COLLECTION_TUBE_COLOR_ARRAY);
 
   const defaultValues = {
     userId: initialData?.userId || "",
@@ -147,11 +161,7 @@ export default function SolicitationsForm({
     exams: initialData?.exams || [],
     infectiousAgents: initialData?.infectiousAgents || [],
     gender: initialData?.gender || "",
-    bloodCollectionTubeColor: initialData?.bloodCollectionTubeColor
-      ? BLOOD_COLLECTION_TUBE_COLOR[
-          initialData.bloodCollectionTubeColor as unknown as keyof typeof BLOOD_COLLECTION_TUBE_COLOR
-        ]
-      : "",
+    bloodCollectionTubeColor: initialData?.bloodCollectionTubeColor || [],
     examResultType: initialData?.examResultType
       ? ExamResultType[
           initialData.examResultType as unknown as keyof typeof ExamResultType
@@ -197,6 +207,16 @@ export default function SolicitationsForm({
     [initialData?.exams, initialData?.infectiousAgents, initialData?.samples]
   );
 
+  const populateBloodCollectionTubeColorCheckboxes = useCallback(() => {
+    setBloodCollectionTubeColorCheckboxes((prev) =>
+      prev.map((bctc) =>
+        initialData?.bloodCollectionTubeColor.includes(bctc.id)
+          ? { ...bctc, checked: true }
+          : { ...bctc, checked: false }
+      )
+    );
+  }, [initialData?.bloodCollectionTubeColor]);
+
   const fetchDropdownItemsData = useCallback(async () => {
     const [infectiouAgentsData, examsData, sampleData] = await Promise.all([
       fetcher<GenericResponse<InfectiousAgents[]>>(
@@ -211,7 +231,8 @@ export default function SolicitationsForm({
 
   useEffect(() => {
     fetchDropdownItemsData();
-  }, [fetchDropdownItemsData]);
+    populateBloodCollectionTubeColorCheckboxes();
+  }, [fetchDropdownItemsData, populateBloodCollectionTubeColorCheckboxes]);
 
   const samplesWithKey = sampleCheckboxes?.map((item) => ({
     ...item,
@@ -236,6 +257,10 @@ export default function SolicitationsForm({
     );
 
     setInfectiousAgentsCheckboxes((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, checked: value } : s))
+    );
+
+    setBloodCollectionTubeColorCheckboxes((prev) =>
       prev.map((s) => (s.id === id ? { ...s, checked: value } : s))
     );
   };
@@ -272,9 +297,9 @@ export default function SolicitationsForm({
       examResultType: Object.entries(ExamResultType).find(
         ([, val]) => val === values.examResultType
       )?.[0],
-      bloodCollectionTubeColor: Object.entries(
-        BLOOD_COLLECTION_TUBE_COLOR
-      ).find(([, val]) => val === values.bloodCollectionTubeColor)?.[0],
+      bloodCollectionTubeColor: bloodCollectionTubeColorCheckboxes
+        .filter((s) => s.checked)
+        .map((s) => s.id),
     };
   }
 
@@ -515,7 +540,7 @@ export default function SolicitationsForm({
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="bloodCollectionTubeColor"
                 render={({ field }) => (
@@ -544,8 +569,35 @@ export default function SolicitationsForm({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
+
+            <Card className="mx-auto w-full">
+              <CardHeader>
+                <CardTitle className="text-left text-md">
+                  Tubo de coleta de sangue
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                  {bloodCollectionTubeColorCheckboxes?.map((bctc) => (
+                    <div key={bctc.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={bctc.id}
+                        disabled={isView}
+                        checked={bctc.checked}
+                        onCheckedChange={(value) =>
+                          toggleCheck(bctc.id, value === true)
+                        }
+                        className="cursor-pointer"
+                      />
+                      <Label htmlFor={bctc.id}>{bctc.name}</Label>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="mx-auto w-full">
               <CardHeader>
                 <CardTitle className="text-left text-md">Amostra</CardTitle>

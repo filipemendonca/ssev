@@ -3,15 +3,14 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CellAction } from "./cell-actions";
+import { Dispatch, SetStateAction } from "react";
 import {
-  BLOOD_COLLECTION_TUBE_COLOR,
   ExamResultType,
   recordStatus,
   SolicitationStatus,
   styles,
 } from "../types/types";
-import { Dispatch, SetStateAction } from "react";
+import { CellAction } from "./cell-actions";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -28,7 +27,7 @@ export type Solicitations = {
   samples: string[];
   exams: string[];
   infectiousAgents: string[];
-  bloodCollectionTubeColor: BLOOD_COLLECTION_TUBE_COLOR;
+  bloodCollectionTubeColor: string[];
   status: SolicitationStatus;
   canceledAt: string;
   canceledCause: string;
