@@ -3,7 +3,7 @@ import { GenericResponse } from "@/types";
 import { fetcher } from "@/utils/fetcher";
 import { useQuery } from "@tanstack/react-query";
 import { ExamsResultTemplate } from "../data-table/columns";
-import UsersForm from "./exams-result-template-form";
+import ExamsResultTemplateForm from "./exams-result-template-form";
 
 type ExamsResultTemplateViewPageProps = {
   examsResultTemplateId: string;
@@ -23,7 +23,7 @@ export default function ExamsResultTemplateViewPage({
     enabled: isEdit,
   });
 
-  const users = isEdit ? data?.data : undefined;
+  const examResultTemplate = isEdit ? data?.data : undefined;
 
   let pageTitle = "Template de Exames - Novo";
 
@@ -32,6 +32,10 @@ export default function ExamsResultTemplateViewPage({
   }
 
   return (
-    <UsersForm isEdit={isEdit} initialData={users} pageTitle={pageTitle} />
+    <ExamsResultTemplateForm
+      isEdit={isEdit}
+      initialData={examResultTemplate}
+      pageTitle={pageTitle}
+    />
   );
 }

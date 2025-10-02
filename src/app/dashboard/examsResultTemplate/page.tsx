@@ -22,8 +22,8 @@ export default function Page() {
   );
 
   const { data } = useApiQuery<GenericResponse<ExamsResultTemplate[]>>(
-    ["examsResultTemaplate", paginationOptions],
-    `/examsResultTemaplate?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
+    ["examsResultTemplate", paginationOptions],
+    `/examsResultTemplate?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
   );
 
   return (

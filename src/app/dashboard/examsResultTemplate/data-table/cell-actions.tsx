@@ -26,11 +26,11 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const { deleteItemAsync } = useApiMutationDelete<
     GenericResponse<ExamsResultTemplate>
   >({
-    endpoint: `/examsResultTemaplate/${model.id}`,
+    endpoint: `/examsResultTemplate/${model.id}`,
     hasBody: false,
-    queryKeys: ["deleteExamsResultTemaplate"],
+    queryKeys: ["deleteExamsResultTemplate"],
     invalidateQueries: true,
-    invalidateQueryKeys: ["examsResultTemaplate"],
+    invalidateQueryKeys: ["examsResultTemplate"],
   });
 
   const onConfirm = async () => {
@@ -57,7 +57,9 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/users/${model.id}`)}
+            onClick={() =>
+              router.push(`/dashboard/examsResultTemplate/${model.id}`)
+            }
             className="cursor-pointer"
           >
             <IconEdit className="mr-2 h-4 w-4" /> Editar
