@@ -4,14 +4,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CellAction } from "./cell-actions";
-import { SerializedEditorState } from "lexical";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type ExamsResultTemplate = {
   id: string;
   name: string;
-  content: SerializedEditorState | undefined;
+  fileName: string;
+  filePath: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -20,6 +20,10 @@ export const columns: ColumnDef<ExamsResultTemplate>[] = [
   {
     accessorKey: "name",
     header: "Nome",
+  },
+  {
+    accessorKey: "fileName",
+    header: "Arquivo",
   },
   {
     accessorKey: "createdAt",
