@@ -11,7 +11,8 @@ import { getAccessToken, refreshToken } from "@/hooks/use-login";
 
 export async function fetcher<T = unknown>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  multipartFormData: boolean = false
 ): Promise<T> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -22,10 +23,13 @@ export async function fetcher<T = unknown>(
   let token = await getAccessToken();
 
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
     ...(options.headers || {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
+
+  if (!multipartFormData) {
+    (headers as Record<string, string>)["Content-Type"] = "application/json";
+  }
 
   const url = `${baseUrl}${endpoint}`;
 

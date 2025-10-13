@@ -1,19 +1,6 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useApiMutation } from "@/hooks/use-api-mutation";
-import { GenericResponse } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import * as z from "zod";
-import { ExamsResultTemplate } from "../data-table/columns";
-import { SerializedEditorState } from "lexical";
-import { RichTextArea } from "@/components/rich-text-area";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { SaveAll } from "lucide-react";
-import Link from "next/link";
-import { IconArrowLeft } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -23,50 +10,36 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useApiMutation } from "@/hooks/use-api-mutation";
+import { cn } from "@/lib/utils";
+import { GenericResponse } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconArrowLeft } from "@tabler/icons-react";
+import { SaveAll } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { ExamsResultTemplate } from "../data-table/columns";
+import { FileUploader } from "./file-uploader";
 
 const formSchema = z.object({
   name: z.string().min(1, {
     message: "O campo Nome é obrigatório.",
   }),
-  content: z.any(),
+  attachment: z.custom<File | null>(
+    (value) => value instanceof File || value === null,
+    {
+      message: "Deve-se importar um arquivo do tipo .docx",
+    }
+  ),
 });
 
 interface ExamsResultTemplateFormProps {
-  initialData: ExamsResultTemplate | undefined;
+  initialData: ExamsResultTemplate | null;
   pageTitle: string;
   isEdit: boolean;
 }
-
-// export const initialValue = {
-//   root: {
-//     children: [
-//       {
-//         children: [
-//           {
-//             detail: 0,
-//             format: 0,
-//             mode: "normal",
-//             style: "",
-//             text: "",
-//             type: "text",
-//             version: 1,
-//           },
-//         ],
-//         direction: "ltr",
-//         format: "",
-//         indent: 0,
-//         type: "paragraph",
-//         version: 1,
-//       },
-//     ],
-//     direction: "ltr",
-//     format: "",
-//     indent: 0,
-//     type: "root",
-//     version: 1,
-//   },
-// } as unknown as SerializedEditorState;
 
 export default function ExamsResultTemplateForm({
   initialData,
@@ -74,14 +47,10 @@ export default function ExamsResultTemplateForm({
   isEdit,
 }: Readonly<ExamsResultTemplateFormProps>) {
   const route = useRouter();
-  const [editorState, setEditorState] = useState<
-    SerializedEditorState | undefined
-  >(initialData?.content);
 
   const defaultValues = {
     name: initialData?.name ?? "",
-    content:
-      initialData?.content ?? (editorState as unknown as SerializedEditorState),
+    attachment: null,
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -97,6 +66,7 @@ export default function ExamsResultTemplateForm({
     queryKeys: ["createExamsResultTemplate"],
     invalidateQueries: true,
     invalidateQueryKeys: ["examsResultTemplate"],
+    multipartFormData: true,
   });
 
   const { mutateAsync: editExamsResultTemplateAsync } = useApiMutation<
@@ -107,14 +77,21 @@ export default function ExamsResultTemplateForm({
     queryKeys: ["editExamsResultTemplate"],
     invalidateQueries: true,
     invalidateQueryKeys: ["examsResultTemplate"],
+    multipartFormData: true,
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+    formData.append("name", values.name);
+    if (values.attachment) {
+      formData.append("file", values.attachment);
+    }
+
     try {
       if (isEdit) {
-        await editExamsResultTemplateAsync(values as never);
+        await editExamsResultTemplateAsync(formData as never);
       } else {
-        await createExamsResultTemplateAsync(values as never);
+        await createExamsResultTemplateAsync(formData as never);
       }
     } catch (error) {
       console.log(error);
@@ -136,10 +113,6 @@ export default function ExamsResultTemplateForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* <div className="flex flex-col">
-              <Label className="mb-1 text-sm">Nome</Label>
-              <Input placeholder="Insira o nome" />
-            </div> */}
               <FormField
                 control={form.control}
                 name="name"
@@ -155,24 +128,14 @@ export default function ExamsResultTemplateForm({
               />
             </div>
             <div className="grid grid-cols-1 gap-6">
-              {/* <div className="flex flex-col">
-              <Label className="mb-1 text-sm">Conteúdo do template</Label>
-              <RichTextArea
-                editorState={editorState}
-                setEditorState={setEditorState}
-              />
-            </div> */}
               <FormField
                 control={form.control}
-                name="content"
+                name="attachment"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Conteúdo do template</FormLabel>
                     <FormControl>
-                      <RichTextArea
-                        editorState={field.value}
-                        setEditorState={setEditorState}
-                      />
+                      <FileUploader {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

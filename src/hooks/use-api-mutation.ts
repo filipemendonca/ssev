@@ -21,6 +21,7 @@ interface UseApiMutationOptions {
   queryKeys?: unknown[];
   invalidateQueries?: boolean;
   invalidateQueryKeys?: unknown[];
+  multipartFormData?: boolean;
 }
 
 export function useApiMutation<T = unknown>({
@@ -31,17 +32,30 @@ export function useApiMutation<T = unknown>({
   queryKeys = [],
   invalidateQueries = false,
   invalidateQueryKeys = [],
+  multipartFormData = false,
 }: UseApiMutationOptions) {
   const queryClient = useQueryClient();
 
+  let body: BodyInit | null | undefined = null;
+
   return useMutation<T, Error, never>({
     mutationKey: queryKeys,
-    mutationFn: async (data: never) => {
-      return fetcher<T>(endpoint, {
-        method,
-        body: JSON.stringify(data),
-        cache: "no-store",
-      });
+    mutationFn: async (data: unknown) => {
+      if (data instanceof FormData) {
+        body = data;
+      } else {
+        body = JSON.stringify(data);
+      }
+
+      return fetcher<T>(
+        endpoint,
+        {
+          method,
+          body: body,
+          cache: "no-store",
+        },
+        multipartFormData
+      );
     },
     onSuccess: (data) => {
       const res = data as GenericResponse<T>;
