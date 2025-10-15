@@ -1,20 +1,22 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Upload, X } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import FileInformation from "./file-information";
 
 interface FileUploaderProps {
   value?: File | null;
+  fileName: string | null;
   onChange?: (file: File | null) => void;
 }
 
-export function FileUploader({ value, onChange }: Readonly<FileUploaderProps>) {
-  const [progress, setProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-
+export function FileUploader({
+  value,
+  onChange,
+  fileName,
+}: Readonly<FileUploaderProps>) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const uploadedFile = acceptedFiles[0];
@@ -26,7 +28,6 @@ export function FileUploader({ value, onChange }: Readonly<FileUploaderProps>) {
       }
 
       onChange?.(uploadedFile);
-      simulateUpload();
     },
     [onChange]
   );
@@ -40,25 +41,13 @@ export function FileUploader({ value, onChange }: Readonly<FileUploaderProps>) {
     },
   });
 
-  const simulateUpload = () => {
-    setIsUploading(true);
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setProgress(progress);
-      if (progress >= 100) {
-        clearInterval(interval);
-        setIsUploading(false);
-      }
-    }, 20);
-  };
-
   const removeFile = () => {
     onChange?.(null);
-    setProgress(0);
   };
 
-  return (
+  return fileName ? (
+    <FileInformation fileName={fileName} />
+  ) : (
     <div className="flex flex-col gap-4 w-full p-4 border rounded-xl shadow-sm bg-white">
       {value ? (
         <div className="flex flex-col gap-2">
@@ -79,15 +68,6 @@ export function FileUploader({ value, onChange }: Readonly<FileUploaderProps>) {
               <X className="w-5 h-5" />
             </Button>
           </div>
-
-          <Progress
-            value={progress}
-            className="h-2 bg-gray-200 [&>div]:bg-cyan-600"
-          />
-
-          <p className="text-xs text-gray-500 text-right">
-            {progress < 100 ? `${progress}%` : "Upload concluído!"}
-          </p>
         </div>
       ) : (
         <div

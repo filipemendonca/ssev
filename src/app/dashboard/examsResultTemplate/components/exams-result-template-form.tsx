@@ -27,6 +27,7 @@ const formSchema = z.object({
   name: z.string().min(1, {
     message: "O campo Nome é obrigatório.",
   }),
+  fileName: z.custom<string | null>(),
   attachment: z.custom<File | null>(
     (value) => value instanceof File || value === null,
     {
@@ -50,6 +51,7 @@ export default function ExamsResultTemplateForm({
 
   const defaultValues = {
     name: initialData?.name ?? "",
+    fileName: initialData?.fileName ?? "",
     attachment: null,
   };
 
@@ -135,7 +137,10 @@ export default function ExamsResultTemplateForm({
                   <FormItem>
                     <FormLabel>Conteúdo do template</FormLabel>
                     <FormControl>
-                      <FileUploader {...field} />
+                      <FileUploader
+                        {...field}
+                        fileName={initialData?.fileName || null}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -12,7 +12,8 @@ import { getAccessToken, refreshToken } from "@/hooks/use-login";
 export async function fetcher<T = unknown>(
   endpoint: string,
   options: RequestInit = {},
-  multipartFormData: boolean = false
+  multipartFormData: boolean = false,
+  isFileDownload: boolean = false
 ): Promise<T> {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -53,5 +54,5 @@ export async function fetcher<T = unknown>(
     });
   }
 
-  return res.json();
+  return isFileDownload ? ((await res.blob()) as T) : await res.json();
 }
