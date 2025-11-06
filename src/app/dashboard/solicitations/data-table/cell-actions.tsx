@@ -27,6 +27,7 @@ import { useConfigureButtonToSolicitations } from "../../../../hooks/use-configu
 import { SolicitationStatus } from "../types/types";
 import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
 import { Solicitations } from "./columns";
+import { FinishSolicitationModal } from "../components/finish-solicitation-modal";
 
 interface CellActionProps {
   model: Solicitations;
@@ -45,11 +46,14 @@ export const CellAction: React.FC<CellActionProps> = ({
   const [open, setOpen] = useState(false);
   const [openAlertDialogChangeStatus, setOpenAlertDialogChangeStatus] =
     useState(false);
+  const [openFinishSolicitationModal, setOpenFinishSolicitationModal] =
+    useState(false);
   const router = useRouter();
   const { user } = useUserStore();
   const {
     enableChangeStatus,
     enableCrudButtons,
+    enableFinishButton,
     enableBlockSolicitationButton,
     enableCancelSolicitationButton,
   } = useConfigureButtonToSolicitations(model.status, user ? user.role : null);
@@ -93,7 +97,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     model.status = changeToNextStatus(model.status);
     await editSolicitationAsync(model as never);
     setOpenAlertDialogChangeStatus(false);
-    window.location.reload();
+    globalThis.location.reload();
   };
 
   const onClickButton2GenericModal = () => {
@@ -193,6 +197,18 @@ export const CellAction: React.FC<CellActionProps> = ({
       <></>
     );
 
+  const renderFinishButton = () =>
+    enableFinishButton ? (
+      <DropdownMenuItem
+        onClick={() => setOpenFinishSolicitationModal(true)}
+        className="cursor-pointer"
+      >
+        <CheckIcon className="mr-2 h-4 w-4" /> Finalizar solicitação
+      </DropdownMenuItem>
+    ) : (
+      <></>
+    );
+
   return (
     <>
       <AlertModal
@@ -214,6 +230,11 @@ export const CellAction: React.FC<CellActionProps> = ({
         buttonText1={button1}
         buttonText2={button2}
       />
+      <FinishSolicitationModal
+        isOpen={openFinishSolicitationModal}
+        onClose={() => setOpenFinishSolicitationModal(false)}
+        mutateAsync={() => {}}
+      />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0 cursor-pointer">
@@ -232,7 +253,8 @@ export const CellAction: React.FC<CellActionProps> = ({
           {renderBlockButton()}
           {renderCancelSolicitation()}
           {renderCrudButtons()}
-          {renderChangeStatusButton()}
+          {!enableFinishButton && renderChangeStatusButton()}
+          {renderFinishButton()}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

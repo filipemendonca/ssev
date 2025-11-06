@@ -4,6 +4,7 @@ import { ROLE } from "@/enum/role.enum";
 interface ConfigureButtonsToSolicitation {
   enableChangeStatus: boolean;
   enableCrudButtons: boolean;
+  enableFinishButton: boolean;
   enableBlockSolicitationButton: boolean;
   enableCancelSolicitationButton: boolean;
 }
@@ -11,12 +12,14 @@ interface ConfigureButtonsToSolicitation {
 const configurePerRole = ({
   enableChangeStatus,
   enableCrudButtons,
+  enableFinishButton,
   enableBlockSolicitationButton,
   enableCancelSolicitationButton,
 }: ConfigureButtonsToSolicitation) => {
   return {
     enableChangeStatus,
     enableCrudButtons,
+    enableFinishButton,
     enableBlockSolicitationButton,
     enableCancelSolicitationButton,
   };
@@ -32,6 +35,7 @@ function configurePerStatus(
       return configurePerRole({
         enableChangeStatus: true,
         enableCrudButtons: true,
+        enableFinishButton: false,
         enableBlockSolicitationButton: true,
         enableCancelSolicitationButton: true,
       });
@@ -41,6 +45,7 @@ function configurePerStatus(
         return configurePerRole({
           enableChangeStatus: true,
           enableCrudButtons: true,
+          enableFinishButton: false,
           enableBlockSolicitationButton: true,
           enableCancelSolicitationButton: true,
         });
@@ -49,6 +54,7 @@ function configurePerStatus(
         return configurePerRole({
           enableChangeStatus: false,
           enableCrudButtons: true,
+          enableFinishButton: false,
           enableBlockSolicitationButton: true,
           enableCancelSolicitationButton: false,
         });
@@ -59,6 +65,7 @@ function configurePerStatus(
         return configurePerRole({
           enableChangeStatus: true,
           enableCrudButtons: true,
+          enableFinishButton: true,
           enableBlockSolicitationButton: true,
           enableCancelSolicitationButton: true,
         });
@@ -67,6 +74,7 @@ function configurePerStatus(
         return configurePerRole({
           enableChangeStatus: false,
           enableCrudButtons: false,
+          enableFinishButton: false,
           enableBlockSolicitationButton: false,
           enableCancelSolicitationButton: false,
         });
@@ -77,6 +85,7 @@ function configurePerStatus(
       return configurePerRole({
         enableChangeStatus: false,
         enableCrudButtons: false,
+        enableFinishButton: false,
         enableBlockSolicitationButton: false,
         enableCancelSolicitationButton: false,
       });
@@ -84,6 +93,7 @@ function configurePerStatus(
   return configurePerRole({
     enableChangeStatus: true,
     enableCrudButtons: true,
+    enableFinishButton: true,
     enableBlockSolicitationButton: true,
     enableCancelSolicitationButton: true,
   });
