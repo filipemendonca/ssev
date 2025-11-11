@@ -44,6 +44,10 @@ export const navItems: NavItem[] = [
         url: "/dashboard/examsResultTemplate",
       },
       {
+        title: "Cadastro de Variáveis",
+        url: "/dashboard/variables",
+      },
+      {
         title: "Usuários",
         url: "/dashboard/users",
       },
