@@ -9,7 +9,7 @@ import { CellAction } from "./cell-actions";
 // You can use a Zod schema here if you want.
 export type Variables = {
   id: string;
-  key: string;
+  variableName: string;
   fieldRelated: string;
   tableRelated: string;
   createdAt: string;
@@ -18,7 +18,7 @@ export type Variables = {
 
 export const columns: ColumnDef<Variables>[] = [
   {
-    accessorKey: "key",
+    accessorKey: "variableName",
     header: "Variavel",
   },
   {

@@ -38,9 +38,6 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Insira um e-mail válido.",
   }),
-  username: z.string().min(1, {
-    message: "O campo Username é obrigatório.",
-  }),
   isActive: z.boolean(),
   role: z.enum(Object.values(ROLE) as [string, ...string[]], {
     message: "Selecione uma categoria válida.",
@@ -62,7 +59,6 @@ export default function UsersForm({
 
   const defaultValues = {
     name: initialData?.name ?? "",
-    username: initialData?.username ?? "",
     email: initialData?.email ?? "",
     isActive: initialData?.isActive ?? true,
     role: initialData?.role ?? "",
@@ -138,23 +134,6 @@ export default function UsersForm({
                       <Input
                         type="email"
                         placeholder="Endereço de email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Nome de usuário"
                         {...field}
                       />
                     </FormControl>

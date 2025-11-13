@@ -55,6 +55,7 @@ export function SampleCreateDialog({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    debugger;
     await mutateAsync(values as never);
     form.reset();
     onOpenChange(false);

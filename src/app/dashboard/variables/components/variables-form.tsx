@@ -21,9 +21,21 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Variables } from "../data-table/columns";
+import { useCallback, useEffect, useState } from "react";
+import { fetcher } from "@/utils/fetcher";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
-  key: z.string().min(1, {
+  variableName: z.string().min(1, {
+    message: "O campo Variável é obrigatório.",
+  }),
+  fieldRelated: z.string().min(1, {
     message: "O campo Variável é obrigatório.",
   }),
 });
@@ -40,9 +52,11 @@ export default function VariablesForm({
   isEdit,
 }: Readonly<VariablesFormProps>) {
   const route = useRouter();
+  const [dropdownFieldRelated, setDropdownFieldRelated] = useState<string[]>();
 
   const defaultValues = {
-    key: initialData?.key ?? "",
+    variableName: initialData?.variableName ?? "",
+    fieldRelated: initialData?.fieldRelated ?? "",
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,7 +72,6 @@ export default function VariablesForm({
     queryKeys: ["createVariables"],
     invalidateQueries: true,
     invalidateQueryKeys: ["variables"],
-    multipartFormData: true,
   });
 
   const { mutateAsync: editVariablesAsync } = useApiMutation<
@@ -69,8 +82,18 @@ export default function VariablesForm({
     queryKeys: ["editVariables"],
     invalidateQueries: true,
     invalidateQueryKeys: ["variables"],
-    multipartFormData: true,
   });
+
+  const fetchDropdownItemsFieldRelated = useCallback(async () => {
+    const data = await fetcher<string[]>(
+      "/variables/dropdown/listRelatedFields"
+    );
+    setDropdownFieldRelated(data);
+  }, []);
+
+  useEffect(() => {
+    fetchDropdownItemsFieldRelated();
+  }, [fetchDropdownItemsFieldRelated]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -82,9 +105,7 @@ export default function VariablesForm({
     } catch (error) {
       console.log(error);
     }
-
     form.reset();
-
     route.push("/dashboard/variables");
   }
 
@@ -101,7 +122,7 @@ export default function VariablesForm({
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <FormField
                 control={form.control}
-                name="key"
+                name="variableName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Variável</FormLabel>
@@ -115,6 +136,36 @@ export default function VariablesForm({
                   </FormItem>
                 )}
               />
+
+              {dropdownFieldRelated && (
+                <FormField
+                  control={form.control}
+                  name="fieldRelated"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Campo relacionado</FormLabel>
+                      <Select
+                        onValueChange={(value) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-2/3">
+                            <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {dropdownFieldRelated.map((item) => (
+                            <SelectItem key={item} value={item}>
+                              {item}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
             <Link
               href="/dashboard/variables"
