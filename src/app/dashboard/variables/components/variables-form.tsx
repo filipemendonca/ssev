@@ -52,7 +52,8 @@ export default function VariablesForm({
   isEdit,
 }: Readonly<VariablesFormProps>) {
   const route = useRouter();
-  const [dropdownFieldRelated, setDropdownFieldRelated] = useState<string[]>();
+  const [dropdownFieldRelated, setDropdownFieldRelated] =
+    useState<{ value: string; label: string }[]>();
 
   const defaultValues = {
     variableName: initialData?.variableName ?? "",
@@ -85,9 +86,10 @@ export default function VariablesForm({
   });
 
   const fetchDropdownItemsFieldRelated = useCallback(async () => {
-    const data = await fetcher<string[]>(
+    const data = await fetcher<{ value: string; label: string }[]>(
       "/variables/dropdown/listRelatedFields"
     );
+
     setDropdownFieldRelated(data);
   }, []);
 
@@ -155,8 +157,8 @@ export default function VariablesForm({
                         </FormControl>
                         <SelectContent>
                           {dropdownFieldRelated.map((item) => (
-                            <SelectItem key={item} value={item}>
-                              {item}
+                            <SelectItem key={item.value} value={item.value}>
+                              {item.label}
                             </SelectItem>
                           ))}
                         </SelectContent>

@@ -4,6 +4,33 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CellAction } from "./cell-actions";
+import { mapColumns } from "@/utils/columnsTranslations";
+
+const translations: Record<string, string> = {
+  gender: "Gênero",
+  tutor: "Tutor",
+  patient: "Paciente",
+  doctor: "Veterinário",
+  hospitalVet: "Hospital Veterinário",
+  age: "Idade",
+  createdAt: "Criado em",
+  updatedAt: "Atualizado em",
+  finishedAt: "Finalizado em",
+  canceledAt: "Cancelado em",
+  status: "Status",
+  specie: "Espécie",
+  samples: "Amostras",
+  exams: "Exames",
+  examResultType: "Tipo de Resultado do Exame",
+  infectiousAgents: "Agentes Infecciosos",
+  bloodCollectionTubeColor: "Cor do Tubo de Coleta de Sangue",
+  solicitationClinicAvaliation: "Avaliação Clínica da Solicitação",
+  solicitationColectTypeConclusion: "Tipo de Coleta da Solicitação (Conslusão)",
+  solicitationConclusionText: "Texto de Conclusão da Solicitação",
+  solicitationResult: "Resultado da Solicitação",
+  solicitationSampleConclusion: "Conclusão da Amostra da Solicitação",
+  solicitationSampleQuality: "Qualidade da Amostra da Solicitação",
+};
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -24,6 +51,9 @@ export const columns: ColumnDef<Variables>[] = [
   {
     accessorKey: "fieldRelated",
     header: "Campo relacionado",
+    cell: ({ getValue }) => {
+      return mapColumns(translations, getValue() as string);
+    },
   },
   {
     accessorKey: "createdAt",
