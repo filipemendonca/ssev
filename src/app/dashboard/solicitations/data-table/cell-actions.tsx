@@ -233,7 +233,7 @@ export const CellAction: React.FC<CellActionProps> = ({
       <FinishSolicitationModal
         isOpen={openFinishSolicitationModal}
         onClose={() => setOpenFinishSolicitationModal(false)}
-        mutateAsync={() => {}}
+        mutateAsync={editSolicitationAsync}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

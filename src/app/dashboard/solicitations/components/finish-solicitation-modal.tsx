@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { SolicitationStatus } from "../types/types";
 
 /*
 
@@ -48,6 +49,12 @@ enum QualitySampleType {
   INSATISFATORIA = "Insatisfatória",
 }
 
+enum SolicitationResult {
+  POSITIVO = "Positivo",
+  NEGATIVO = "Negativo",
+  INDETERMINADO = "Indeterminado",
+}
+
 interface FinishSolicitationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -60,18 +67,23 @@ interface FinishSolicitationModalProps {
 }
 
 const formSchema = z.object({
-  supplie: z.string().min(1, "O campo Material é obrigatório."),
-  collectType: z.enum(Object.values(CollectType) as [string, ...string[]], {
-    message: "Selecione o tipo de coleta.",
-  }),
-  qualitySampleType: z.enum(
-    Object.values(QualitySampleType) as [string, ...string[]],
-    {
-      message: "Selecione a qualidade da amostra.",
-    }
-  ),
-  clinicEvaluation: z.string().min(1, "Informe a avaliação clínica."),
-  conclusion: z.string().min(1, "É necessário preencher a conclusão."),
+  solicitationSampleConclusion: z
+    .string()
+    .min(1, "O campo Material é obrigatório."),
+  solicitationColectTypeConclusion: z
+    .string()
+    .min(1, "Selecione o tipo de coleta."),
+  solicitationSampleQuality: z
+    .string()
+    .min(1, "Selecione a qualidade da amostra."),
+  solicitationClinicAvaliation: z
+    .string()
+    .min(1, "Informe a avaliação clínica."),
+  solicitationConclusionText: z
+    .string()
+    .min(1, "É necessário preencher a conclusão."),
+  solicitationResult: z.string().min(1, "Informe o resultado."),
+  status: z.string().optional(),
 });
 
 type FinishSolicitationModalForm = z.infer<typeof formSchema>;
@@ -83,7 +95,11 @@ export const FinishSolicitationModal: React.FC<
 
   const form = useForm<FinishSolicitationModalForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: { supplie: "", conclusion: "", clinicEvaluation: "" },
+    defaultValues: {
+      solicitationSampleConclusion: "",
+      solicitationConclusionText: "",
+      solicitationClinicAvaliation: "",
+    },
   });
 
   useEffect(() => {
@@ -95,6 +111,7 @@ export const FinishSolicitationModal: React.FC<
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    values.status = SolicitationStatus.FINALIZADO;
     await mutateAsync(values as never);
     form.reset();
     onClose();
@@ -116,7 +133,34 @@ export const FinishSolicitationModal: React.FC<
           >
             <FormField
               control={form.control}
-              name="supplie"
+              name="solicitationResult"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Resultado</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value)}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-2/3">
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Object.entries(SolicitationResult).map((item) => (
+                        <SelectItem key={item[0]} value={item[0].toString()}>
+                          {item[1]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="solicitationSampleConclusion"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Material</FormLabel>
@@ -132,7 +176,7 @@ export const FinishSolicitationModal: React.FC<
             />
             <FormField
               control={form.control}
-              name="collectType"
+              name="solicitationColectTypeConclusion"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo de coleta</FormLabel>
@@ -146,9 +190,9 @@ export const FinishSolicitationModal: React.FC<
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.values(CollectType).map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
+                      {Object.entries(CollectType).map((item) => (
+                        <SelectItem key={item[0]} value={item[0].toString()}>
+                          {item[1]}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -159,7 +203,7 @@ export const FinishSolicitationModal: React.FC<
             />
             <FormField
               control={form.control}
-              name="qualitySampleType"
+              name="solicitationSampleQuality"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Qualidade das amostras</FormLabel>
@@ -173,9 +217,9 @@ export const FinishSolicitationModal: React.FC<
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {Object.values(QualitySampleType).map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
+                      {Object.entries(QualitySampleType).map((item) => (
+                        <SelectItem key={item[0]} value={item[0].toString()}>
+                          {item[1]}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -186,7 +230,7 @@ export const FinishSolicitationModal: React.FC<
             />
             <FormField
               control={form.control}
-              name="clinicEvaluation"
+              name="solicitationClinicAvaliation"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Avaliação clínica</FormLabel>
@@ -203,7 +247,7 @@ export const FinishSolicitationModal: React.FC<
             />
             <FormField
               control={form.control}
-              name="conclusion"
+              name="solicitationConclusionText"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Conclusão</FormLabel>
