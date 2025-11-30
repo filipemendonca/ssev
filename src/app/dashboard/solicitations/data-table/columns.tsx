@@ -40,7 +40,6 @@ export type Solicitations = {
 };
 
 export const columns = (
-  shouldShowActions: boolean,
   setSolicitationId?: Dispatch<SetStateAction<string>>,
   setOpenBlockedSolicitationModal?: Dispatch<SetStateAction<boolean>>,
   setOpenCanceledSolicitationModal?: Dispatch<SetStateAction<boolean>>
@@ -94,20 +93,18 @@ export const columns = (
     },
   ];
 
-  if (shouldShowActions) {
-    baseColumns.push({
-      id: "actions",
-      header: "Ações",
-      cell: ({ row }) => (
-        <CellAction
-          model={row.original}
-          setOpenBlockedSolicitationModal={setOpenBlockedSolicitationModal}
-          setOpenCanceledSolicitationModal={setOpenCanceledSolicitationModal}
-          setSolicitationId={setSolicitationId}
-        />
-      ),
-    });
-  }
+  baseColumns.push({
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => (
+      <CellAction
+        model={row.original}
+        setOpenBlockedSolicitationModal={setOpenBlockedSolicitationModal}
+        setOpenCanceledSolicitationModal={setOpenCanceledSolicitationModal}
+        setSolicitationId={setSolicitationId}
+      />
+    ),
+  });
 
   return baseColumns;
 };

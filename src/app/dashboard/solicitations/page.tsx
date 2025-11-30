@@ -5,6 +5,7 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import { GenericDataDataTable } from "@/components/ui/table/generic-data-table";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useApiQuery } from "@/hooks/use-api-query";
 import { cn } from "@/lib/utils";
 import { GenericResponse, PaginationOptions } from "@/types";
@@ -12,10 +13,8 @@ import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { BlockSolicitationModal } from "./components/block-solicitation-modal";
-import { columns, Solicitations } from "./data-table/columns";
-import { SolicitationStatus } from "./types/types";
-import { useApiMutation } from "@/hooks/use-api-mutation";
 import { CancelSolicitationModal } from "./components/cancel-solicitation-modal";
+import { columns, Solicitations } from "./data-table/columns";
 
 export default function Page() {
   const [solicitationId, setSolicitationId] = useState("");
@@ -56,12 +55,7 @@ export default function Page() {
     invalidateQueryKeys: ["solicitation"],
   });
 
-  const hasNonFinalized = data?.data?.some(
-    (row) => row.status !== SolicitationStatus.FINALIZADO
-  );
-
   const columnsDefinitions = columns(
-    hasNonFinalized!,
     setSolicitationId,
     setOpenBlockedSolicitationModal,
     setOpenCanceledSolicitationModal
