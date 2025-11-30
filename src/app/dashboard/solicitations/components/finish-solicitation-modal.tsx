@@ -64,6 +64,7 @@ interface FinishSolicitationModalProps {
     never,
     unknown
   >;
+  callback?: () => void;
 }
 
 const formSchema = z.object({
@@ -90,7 +91,7 @@ type FinishSolicitationModalForm = z.infer<typeof formSchema>;
 
 export const FinishSolicitationModal: React.FC<
   FinishSolicitationModalProps
-> = ({ isOpen, onClose, mutateAsync }) => {
+> = ({ isOpen, onClose, mutateAsync, callback }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   const form = useForm<FinishSolicitationModalForm>({
@@ -115,6 +116,7 @@ export const FinishSolicitationModal: React.FC<
     await mutateAsync(values as never);
     form.reset();
     onClose();
+    callback?.();
   };
 
   return (

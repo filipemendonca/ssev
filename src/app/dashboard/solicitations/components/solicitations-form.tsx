@@ -48,6 +48,7 @@ import {
   styles,
 } from "../types/types";
 import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
+import { FinishSolicitationModal } from "./finish-solicitation-modal";
 
 enum GENDER {
   MACHO = "Macho",
@@ -148,6 +149,8 @@ export default function SolicitationsForm({
     bloodCollectionTubeColorCheckboxes,
     setBloodCollectionTubeColorCheckboxes,
   ] = useState(BLOOD_COLLECTION_TUBE_COLOR_ARRAY);
+  const [openFinishSolicitationModal, setOpenFinishSolicitationModal] =
+    useState(false);
 
   const defaultValues = {
     userId: initialData?.userId || "",
@@ -318,9 +321,14 @@ export default function SolicitationsForm({
 
   const handleChangeStatus = async () => {
     if (initialData?.status) {
-      initialData.status = changeToNextStatus(initialData.status);
-      await editSolicitationAsync(initialData as never);
-      route.push("/dashboard/solicitations");
+      if (initialData.status === SolicitationStatus.EM_ANALISE) {
+        setOpenFinishSolicitationModal(true);
+        return;
+      } else {
+        initialData.status = changeToNextStatus(initialData.status);
+        await editSolicitationAsync(initialData as never);
+        route.push("/dashboard/solicitations");
+      }
     }
   };
 
@@ -360,187 +368,201 @@ export default function SolicitationsForm({
     );
 
   return (
-    <Card className="mx-auto w-full">
-      <CardHeader>
-        <CardTitle className="flex justify-between text-2xl font-bold ">
-          <div className="flex justify-between">
-            {pageTitle}
-            {renderStatusBadge()}
-          </div>
-          <div className="flex justify-between">
-            {renderButtonChangeStatus()}
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="tutor"
-                disabled={isView}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tutor</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Insira o nome do tutor" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="patient"
-                disabled={isView}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Paciente</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Insira o nome do paciente"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="specie"
-                disabled={isView}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Espécie / Raça</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Insira a espécie ou raça do animal."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="age"
-                disabled={isView}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Idade</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Insira a idade do animal."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Gênero</FormLabel>
-                    <Select
-                      disabled={isView}
-                      onValueChange={(value) => field.onChange(value)}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-2/3">
-                          <SelectValue placeholder="Selecione..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Object.values(GENDER).map((item) => (
-                          <SelectItem key={item} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <>
+      <FinishSolicitationModal
+        isOpen={openFinishSolicitationModal}
+        onClose={() => setOpenFinishSolicitationModal(false)}
+        mutateAsync={editSolicitationAsync}
+        callback={() => globalThis.location.reload()}
+      />
+
+      <Card className="mx-auto w-full">
+        <CardHeader>
+          <CardTitle className="flex justify-between text-2xl font-bold ">
+            <div className="flex justify-between">
+              {pageTitle}
+              {renderStatusBadge()}
             </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="doctor"
-                disabled={isView}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Doutor</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Insira o nome do doutor" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="hospitalVet"
-                disabled={isView}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Clínica / Hospital</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="text"
-                        placeholder="Insira o nome da clínica ou hospital."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="flex justify-between">
+              {renderButtonChangeStatus()}
             </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-5 mt-5">
-              <FormField
-                control={form.control}
-                name="examResultType"
-                disabled={isView}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo de exame</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                      }}
-                      disabled={isView}
-                      value={field.value}
-                    >
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="tutor"
+                  disabled={isView}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tutor</FormLabel>
                       <FormControl>
-                        <SelectTrigger className="w-2/3">
-                          <SelectValue placeholder="Selecione..." />
-                        </SelectTrigger>
+                        <Input
+                          placeholder="Insira o nome do tutor"
+                          {...field}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        {Object.values(ExamResultType).map((item) => (
-                          <SelectItem key={item} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="patient"
+                  disabled={isView}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Paciente</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Insira o nome do paciente"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="specie"
+                  disabled={isView}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Espécie / Raça</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Insira a espécie ou raça do animal."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="age"
+                  disabled={isView}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Idade</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Insira a idade do animal."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gênero</FormLabel>
+                      <Select
+                        disabled={isView}
+                        onValueChange={(value) => field.onChange(value)}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-2/3">
+                            <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.values(GENDER).map((item) => (
+                            <SelectItem key={item} value={item}>
+                              {item}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              {/* <FormField
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <FormField
+                  control={form.control}
+                  name="doctor"
+                  disabled={isView}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Doutor</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Insira o nome do doutor"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="hospitalVet"
+                  disabled={isView}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Clínica / Hospital</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Insira o nome da clínica ou hospital."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-5 mt-5">
+                <FormField
+                  control={form.control}
+                  name="examResultType"
+                  disabled={isView}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de exame</FormLabel>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        disabled={isView}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-2/3">
+                            <SelectValue placeholder="Selecione..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Object.values(ExamResultType).map((item) => (
+                            <SelectItem key={item} value={item}>
+                              {item}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* <FormField
                 control={form.control}
                 name="bloodCollectionTubeColor"
                 render={({ field }) => (
@@ -570,136 +592,140 @@ export default function SolicitationsForm({
                   </FormItem>
                 )}
               /> */}
-            </div>
+              </div>
 
-            <Card className="mx-auto w-full">
-              <CardHeader>
-                <CardTitle className="text-left text-md">
-                  Tubo de coleta de sangue
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {bloodCollectionTubeColorCheckboxes?.map((bctc) => (
-                    <div key={bctc.key} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={bctc.id}
-                        disabled={isView}
-                        checked={bctc.checked}
-                        onCheckedChange={(value) =>
-                          toggleCheck(bctc.id, value === true)
-                        }
-                        className="cursor-pointer"
-                      />
-                      <Label htmlFor={bctc.id}>{bctc.name}</Label>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              <Card className="mx-auto w-full">
+                <CardHeader>
+                  <CardTitle className="text-left text-md">
+                    Tubo de coleta de sangue
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    {bloodCollectionTubeColorCheckboxes?.map((bctc) => (
+                      <div
+                        key={bctc.key}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={bctc.id}
+                          disabled={isView}
+                          checked={bctc.checked}
+                          onCheckedChange={(value) =>
+                            toggleCheck(bctc.id, value === true)
+                          }
+                          className="cursor-pointer"
+                        />
+                        <Label htmlFor={bctc.id}>{bctc.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card className="mx-auto w-full">
-              <CardHeader>
-                <CardTitle className="text-left text-md">Amostra</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {samplesWithKey?.map((sample) => (
-                    <div
-                      key={sample.key}
-                      className="flex items-center space-x-2"
-                    >
-                      <Checkbox
-                        id={sample.id}
-                        disabled={isView}
-                        checked={sample.checked}
-                        onCheckedChange={(value) =>
-                          toggleCheck(sample.id, value === true)
-                        }
-                        className="cursor-pointer"
-                      />
-                      <Label htmlFor={sample.id}>{sample.name}</Label>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              <Card className="mx-auto w-full">
+                <CardHeader>
+                  <CardTitle className="text-left text-md">Amostra</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    {samplesWithKey?.map((sample) => (
+                      <div
+                        key={sample.key}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={sample.id}
+                          disabled={isView}
+                          checked={sample.checked}
+                          onCheckedChange={(value) =>
+                            toggleCheck(sample.id, value === true)
+                          }
+                          className="cursor-pointer"
+                        />
+                        <Label htmlFor={sample.id}>{sample.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card className="mx-auto w-full">
-              <CardHeader>
-                <CardTitle className="text-left text-md">Exames</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {examsWithKey?.map((exams) => (
-                    <div
-                      key={exams.key}
-                      className="flex items-center space-x-2"
-                    >
-                      <Checkbox
-                        id={exams.id}
-                        checked={exams.checked}
-                        disabled={isView}
-                        onCheckedChange={(value) =>
-                          toggleCheck(exams.id, value === true)
-                        }
-                        className="cursor-pointer"
-                      />
-                      <Label htmlFor={exams.id}>{exams.name}</Label>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+              <Card className="mx-auto w-full">
+                <CardHeader>
+                  <CardTitle className="text-left text-md">Exames</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    {examsWithKey?.map((exams) => (
+                      <div
+                        key={exams.key}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={exams.id}
+                          checked={exams.checked}
+                          disabled={isView}
+                          onCheckedChange={(value) =>
+                            toggleCheck(exams.id, value === true)
+                          }
+                          className="cursor-pointer"
+                        />
+                        <Label htmlFor={exams.id}>{exams.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card className="mx-auto w-full">
-              <CardHeader>
-                <CardTitle className="text-left text-md">
-                  Agentes Infecciosos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                  {infectiousAgentsWithKey?.map((infectiousAgents) => (
-                    <div
-                      key={infectiousAgents.key}
-                      className="flex items-center space-x-2"
-                    >
-                      <Checkbox
-                        id={infectiousAgents.id}
-                        checked={infectiousAgents.checked}
-                        disabled={isView}
-                        onCheckedChange={(value) =>
-                          toggleCheck(infectiousAgents.id, value === true)
-                        }
-                        className="cursor-pointer"
-                      />
-                      <Label htmlFor={infectiousAgents.id}>
-                        {infectiousAgents.name}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            <Link
-              href="/dashboard/solicitations"
-              className={cn(
-                buttonVariants({ variant: "secondary" }),
-                "text-xs md:text-sm cursor-pointer mr-2"
+              <Card className="mx-auto w-full">
+                <CardHeader>
+                  <CardTitle className="text-left text-md">
+                    Agentes Infecciosos
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    {infectiousAgentsWithKey?.map((infectiousAgents) => (
+                      <div
+                        key={infectiousAgents.key}
+                        className="flex items-center space-x-2"
+                      >
+                        <Checkbox
+                          id={infectiousAgents.id}
+                          checked={infectiousAgents.checked}
+                          disabled={isView}
+                          onCheckedChange={(value) =>
+                            toggleCheck(infectiousAgents.id, value === true)
+                          }
+                          className="cursor-pointer"
+                        />
+                        <Label htmlFor={infectiousAgents.id}>
+                          {infectiousAgents.name}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+              <Link
+                href="/dashboard/solicitations"
+                className={cn(
+                  buttonVariants({ variant: "secondary" }),
+                  "text-xs md:text-sm cursor-pointer mr-2"
+                )}
+              >
+                <IconArrowLeft /> Voltar
+              </Link>
+              {isView ?? (
+                <Button type="submit" className="cursor-pointer">
+                  <SaveAll />
+                  Salvar
+                </Button>
               )}
-            >
-              <IconArrowLeft /> Voltar
-            </Link>
-            {isView ?? (
-              <Button type="submit" className="cursor-pointer">
-                <SaveAll />
-                Salvar
-              </Button>
-            )}
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </>
   );
 }
