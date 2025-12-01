@@ -17,6 +17,7 @@ import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 import {
   CheckIcon,
   CircleX,
+  DownloadIcon,
   EyeIcon,
   LockIcon,
   UnlockIcon,
@@ -24,10 +25,14 @@ import {
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useConfigureButtonToSolicitations } from "../../../../hooks/use-configure-buttons-to-solicitation";
-import { SolicitationStatus } from "../types/types";
-import { changeToNextStatus, updateTextDialogByStatus } from "../utils/utils";
-import { Solicitations } from "./columns";
 import { FinishSolicitationModal } from "../components/finish-solicitation-modal";
+import { SolicitationStatus } from "../types/types";
+import {
+  changeToNextStatus,
+  downloadDocx,
+  updateTextDialogByStatus,
+} from "../utils/utils";
+import { Solicitations } from "./columns";
 
 interface CellActionProps {
   model: Solicitations;
@@ -209,6 +214,22 @@ export const CellAction: React.FC<CellActionProps> = ({
       <></>
     );
 
+  const renderDownloadButton = () => {
+    return model.status === SolicitationStatus.FINALIZADO ? (
+      <>
+        <Separator className="mt-2 mb-2" />
+        <DropdownMenuItem
+          onClick={() => downloadDocx(model)}
+          className="cursor-pointer"
+        >
+          <DownloadIcon className="mr-2 h-4 w-4" /> Baixar laudo
+        </DropdownMenuItem>
+      </>
+    ) : (
+      <></>
+    );
+  };
+
   return (
     <>
       <AlertModal
@@ -255,6 +276,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           {renderCrudButtons()}
           {!enableFinishButton && renderChangeStatusButton()}
           {renderFinishButton()}
+          {renderDownloadButton()}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
