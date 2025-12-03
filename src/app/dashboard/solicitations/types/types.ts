@@ -49,3 +49,19 @@ export const recordStatus: Record<string, string> = {
   FINALIZADO: "Finalizado",
   CANCELADO: "Cancelado",
 };
+
+export interface SolicitationFormValues {
+  userId: string | undefined;
+  samples: string[];
+  exams: string[];
+  infectiousAgents: string[];
+  examResultType: string | undefined;
+  bloodCollectionTubeColor: string[];
+  tutor: string;
+  patient: string;
+  age: string;
+  doctor: string;
+  specie: string;
+  hospitalVet: string;
+  gender: string;
+}

@@ -44,6 +44,7 @@ import {
   InfectiousAgentsWithCheck,
   recordStatus,
   SampleWithCheck,
+  SolicitationFormValues,
   SolicitationStatus,
   styles,
 } from "../types/types";
@@ -291,7 +292,6 @@ export default function SolicitationsForm({
   async function mapProperties(values: z.infer<typeof formSchema>) {
     return {
       ...values,
-      userId: user?.id,
       samples: sampleCheckboxes.filter((s) => s.checked).map((s) => s.id),
       exams: examsCheckboxes.filter((e) => e.checked).map((e) => e.id),
       infectiousAgents: infectiousAgentsCheckboxes
@@ -303,15 +303,17 @@ export default function SolicitationsForm({
       bloodCollectionTubeColor: bloodCollectionTubeColorCheckboxes
         .filter((s) => s.checked)
         .map((s) => s.id),
-    };
+    } as SolicitationFormValues;
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     //Populate samples, exams and infectious agents from checkboxes
     const obj = await mapProperties(values);
+
     if (isEdit) {
       await editSolicitationAsync(obj as never);
     } else {
+      obj.userId = user?.id;
       await createSolicitationAsync(obj as never);
     }
     form.reset();
