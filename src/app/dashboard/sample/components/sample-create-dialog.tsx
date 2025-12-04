@@ -55,7 +55,6 @@ export function SampleCreateDialog({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    debugger;
     await mutateAsync(values as never);
     form.reset();
     onOpenChange(false);
@@ -75,11 +74,7 @@ export function SampleCreateDialog({
         </DialogHeader>
         <div className="-mr-4 h-20 w-full overflow-y-auto py-1 pr-4">
           <Form {...form}>
-            <form
-              id="user-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-4 p-0.5"
-            >
+            <form id="user-form" className="space-y-4 p-0.5">
               <FormField
                 control={form.control}
                 name="name"
@@ -104,7 +99,12 @@ export function SampleCreateDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button type="submit" form="user-form" className="cursor-pointer">
+          <Button
+            type="button"
+            form="user-form"
+            className="cursor-pointer"
+            onClick={form.handleSubmit(onSubmit)}
+          >
             <SaveAll />
             Salvar
           </Button>
