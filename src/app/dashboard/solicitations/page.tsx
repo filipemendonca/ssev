@@ -11,13 +11,20 @@ import { cn } from "@/lib/utils";
 import { GenericResponse, PaginationOptions } from "@/types";
 import { IconPlus } from "@tabler/icons-react";
 import Link from "next/link";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { BlockSolicitationModal } from "./components/block-solicitation-modal";
 import { CancelSolicitationModal } from "./components/cancel-solicitation-modal";
 import { columns, Solicitations } from "./data-table/columns";
+import { SolicitationFilter } from "./components/solicitation-filter";
+import { SolicitationFilterDto } from "./dto/solicitation.filter.dto";
+
+const baseUrl = "/solicitation";
 
 export default function Page() {
   const [solicitationId, setSolicitationId] = useState("");
+  const [search, setSearch] = useState<SolicitationFilterDto>(
+    undefined as never
+  );
   const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>(
     {
       currentPage: 1,
@@ -30,10 +37,28 @@ export default function Page() {
   const [openCanceledSolicitationModal, setOpenCanceledSolicitationModal] =
     useState(false);
 
-  const { data } = useApiQuery<GenericResponse<Solicitations[]>>(
+  const paginationUrl = `?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`;
+
+  const { data: getAll } = useApiQuery<GenericResponse<Solicitations[]>>(
     ["solicitation", paginationOptions],
-    `/solicitation?limit=${paginationOptions.limit}&currentPage=${paginationOptions.currentPage}`
+    `${baseUrl}${paginationUrl}`
   );
+
+  const { mutateAsync: searchAsync, data: getSearched } = useApiMutation<
+    GenericResponse<Solicitations[]>
+  >({
+    endpoint: `${baseUrl}/search${paginationUrl}`,
+    method: "POST",
+    queryKeys: ["solicitationSearch"],
+  });
+
+  useEffect(() => {
+    if (search !== undefined) searchAsync(search as never);
+  }, [searchAsync, search]);
+
+  const data = search
+    ? (getSearched as GenericResponse<Solicitations[]>)
+    : (getAll as GenericResponse<Solicitations[]>);
 
   const { mutateAsync: blockUnblockSolicitationAsync } = useApiMutation<
     GenericResponse<Solicitations>
@@ -88,6 +113,9 @@ export default function Page() {
             </Link>
           </div>
           <Separator />
+
+          <SolicitationFilter setSearch={setSearch} />
+
           <Suspense
             fallback={
               <DataTableSkeleton columnCount={3} rowCount={8} filterCount={2} />
@@ -95,7 +123,7 @@ export default function Page() {
           >
             <GenericDataDataTable
               columns={columnsDefinitions}
-              item={data as GenericResponse<Solicitations[]>}
+              item={data}
               setPaginationOptions={setPaginationOptions}
               isClicable={true}
             />

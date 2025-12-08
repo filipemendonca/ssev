@@ -403,6 +403,7 @@ export default function SolicitationsForm({
                       <FormLabel>Tutor</FormLabel>
                       <FormControl>
                         <Input
+                          autoFocus
                           placeholder="Insira o nome do tutor"
                           {...field}
                         />
