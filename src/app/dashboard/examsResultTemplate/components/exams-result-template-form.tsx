@@ -37,7 +37,7 @@ const formSchema = z.object({
 });
 
 interface ExamsResultTemplateFormProps {
-  initialData: ExamsResultTemplate | null;
+  initialData: ExamsResultTemplate | undefined;
   pageTitle: string;
   isEdit: boolean;
 }
