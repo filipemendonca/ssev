@@ -32,6 +32,7 @@ async function loginUser(data: LoginPayload): Promise<LoginResponse> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
       credentials: "include",
+      cache: "no-store", // evita cache
     }
   );
 
@@ -67,6 +68,7 @@ export async function refreshToken(): Promise<{ access_token: string }> {
     {
       method: "POST",
       credentials: "include",
+      cache: "no-store",
     }
   );
 
@@ -100,6 +102,7 @@ async function logoutUser() {
     {
       method: "POST",
       credentials: "include", // envia cookies
+      cache: "no-store",
     }
   );
 
@@ -119,7 +122,7 @@ export function useLogout() {
       sessionStorage.removeItem("access_token");
 
       // Redireciona para login
-      window.location.href = "/sign-in";
+      globalThis.location.href = "/sign-in";
     },
   });
 }
