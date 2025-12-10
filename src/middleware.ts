@@ -13,6 +13,7 @@ async function validateRefreshToken(token: string): Promise<boolean> {
         // enviamos o token explícito no corpo ou header
         body: JSON.stringify({ refresh_token: token }),
         cache: "no-store",
+        credentials: "include",
       }
     );
 
