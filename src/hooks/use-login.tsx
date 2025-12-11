@@ -25,16 +25,24 @@ interface LoginErrorResponse {
 
 // Função que chama o endpoint
 async function loginUser(data: LoginPayload): Promise<LoginResponse> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-      cache: "no-store", // evita cache
-    }
-  );
+  const res = await fetch(`/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+    credentials: "include",
+    cache: "no-store", // evita cache
+  });
+
+  //  const res = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+  //   {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(data),
+  //     credentials: "include",
+  //     cache: "no-store", // evita cache
+  //   }
+  // );
 
   if (!res.ok) {
     const errorResponse = (await res.json()) as unknown as LoginErrorResponse;
@@ -63,14 +71,20 @@ export function useLogin() {
 }
 
 export async function refreshToken(): Promise<{ access_token: string }> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
-    {
-      method: "POST",
-      credentials: "include",
-      cache: "no-store",
-    }
-  );
+  const res = await fetch(`/auth/refresh`, {
+    method: "POST",
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  // const res = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
+  //   {
+  //     method: "POST",
+  //     credentials: "include",
+  //     cache: "no-store",
+  //   }
+  // );
 
   if (!res.ok) {
     throw new Error("Não foi possível renovar o token");
@@ -97,14 +111,20 @@ export async function getAccessToken(): Promise<string | null> {
 }
 
 async function logoutUser() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`,
-    {
-      method: "POST",
-      credentials: "include", // envia cookies
-      cache: "no-store",
-    }
-  );
+  const res = await fetch(`/auth/logout`, {
+    method: "POST",
+    credentials: "include", // envia cookies
+    cache: "no-store",
+  });
+
+  // const res = await fetch(
+  //   `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`,
+  //   {
+  //     method: "POST",
+  //     credentials: "include", // envia cookies
+  //     cache: "no-store",
+  //   }
+  // );
 
   localStorage.removeItem("_e");
 
