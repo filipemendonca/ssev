@@ -15,11 +15,11 @@ export async function fetcher<T = unknown>(
   multipartFormData: boolean = false,
   isFileDownload: boolean = false
 ): Promise<T> {
-  // const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  // if (!baseUrl) {
-  //   throw new Error("NEXT_PUBLIC_API_BASE_URL não está definida.");
-  // }
+  if (!baseUrl) {
+    throw new Error("NEXT_PUBLIC_API_BASE_URL não está definida.");
+  }
 
   let token = await getAccessToken();
 
@@ -32,8 +32,7 @@ export async function fetcher<T = unknown>(
     (headers as Record<string, string>)["Content-Type"] = "application/json";
   }
 
-  // const url = `${baseUrl}${endpoint}`;
-  const url = `${endpoint}`;
+  const url = `${baseUrl}${endpoint}`;
 
   let res = await fetch(url, {
     ...options,
