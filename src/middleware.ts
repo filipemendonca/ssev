@@ -3,19 +3,16 @@ import { NextResponse } from "next/server";
 
 async function validateRefreshToken(token: string): Promise<boolean> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/validate-refresh`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // enviamos o token explícito no corpo ou header
-        body: JSON.stringify({ refresh_token: token }),
-        cache: "no-store",
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`${process.env.API_URL}/auth/validate-refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // enviamos o token explícito no corpo ou header
+      body: JSON.stringify({ refresh_token: token }),
+      cache: "no-store",
+      credentials: "include",
+    });
 
     if (!res.ok) return false;
 
