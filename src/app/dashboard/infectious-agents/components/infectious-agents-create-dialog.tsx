@@ -58,6 +58,7 @@ export function InfectiousAgentsCreateDialog({
     await mutateAsync(values as never);
     form.reset();
     onOpenChange(false);
+    globalThis.location.reload();
   };
 
   return (

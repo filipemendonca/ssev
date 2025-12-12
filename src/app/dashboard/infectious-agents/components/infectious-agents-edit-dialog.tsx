@@ -60,6 +60,7 @@ export function InfectiousAgentsEditDialog({
     await mutateAsync(values as never);
     form.reset();
     onOpenChange(false);
+    globalThis.location.reload();
   };
 
   return (

@@ -35,6 +35,7 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
   const onConfirm = async () => {
     await deleteItemAsync(model.id as never);
     setOpen(false);
+    globalThis.location.reload();
   };
 
   const onEdit = async () => {

@@ -59,6 +59,7 @@ export function SampleEditDialog({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await mutateAsync(values as never);
     onOpenChange(false);
+    globalThis.location.reload();
   };
 
   return (
