@@ -10,12 +10,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { useLogin } from "@/hooks/use-login";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -37,8 +38,9 @@ const formSchema = z.object({
 });
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const route = useRouter();
-  const { mutateAsync: loginAsync, isPending } = useLogin();
+  const { mutateAsync: loginAsync } = useLogin();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,6 +51,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     const res = await loginAsync(data);
     if (res.access_token) {
       route.push("/dashboard");
@@ -96,10 +99,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         />
         <Button
           className="mt-2 cursor-pointer"
-          disabled={isPending}
+          disabled={isLoading}
           type="submit"
         >
-          Entrar
+          {isLoading ? <Spinner className="size-7" /> : "Entrar"}
         </Button>
       </form>
     </Form>
