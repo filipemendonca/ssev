@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { HTMLAttributes, useState } from "react";
+import { HTMLAttributes, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -40,7 +40,7 @@ const formSchema = z.object({
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const route = useRouter();
-  const { mutateAsync: loginAsync } = useLogin();
+  const { mutateAsync: loginAsync, isError } = useLogin();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,9 +50,16 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     },
   });
 
+  useEffect(() => {
+    if (isError) {
+      setIsLoading(false);
+    }
+  }, [isError]);
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
     const res = await loginAsync(data);
+
     if (res.access_token) {
       route.push("/dashboard");
     }

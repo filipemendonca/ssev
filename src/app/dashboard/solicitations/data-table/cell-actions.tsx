@@ -83,6 +83,16 @@ export const CellAction: React.FC<CellActionProps> = ({
     invalidateQueryKeys: ["solicitation"],
   });
 
+  const { mutateAsync: finishSolicitationAsync } = useApiMutation<
+    GenericResponse<Solicitations>
+  >({
+    endpoint: `/solicitation/finish/${model?.id}`,
+    method: "PATCH",
+    queryKeys: ["finishSolicitation"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["solicitation"],
+  });
+
   const { mutateAsync: blockUnblockSolicitationAsync } = useApiMutation<
     GenericResponse<Solicitations>
   >({
@@ -254,7 +264,7 @@ export const CellAction: React.FC<CellActionProps> = ({
       <FinishSolicitationModal
         isOpen={openFinishSolicitationModal}
         onClose={() => setOpenFinishSolicitationModal(false)}
-        mutateAsync={editSolicitationAsync}
+        mutateAsync={finishSolicitationAsync}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

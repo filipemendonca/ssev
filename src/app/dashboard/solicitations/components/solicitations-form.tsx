@@ -289,6 +289,16 @@ export default function SolicitationsForm({
     invalidateQueryKeys: ["solicitation"],
   });
 
+  const { mutateAsync: finishSolicitationAsync } = useApiMutation<
+    GenericResponse<Solicitations>
+  >({
+    endpoint: `/solicitation/finish/${initialData?.id}`,
+    method: "PATCH",
+    queryKeys: ["finishSolicitation"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["solicitation"],
+  });
+
   async function mapProperties(values: z.infer<typeof formSchema>) {
     return {
       ...values,
@@ -374,7 +384,7 @@ export default function SolicitationsForm({
       <FinishSolicitationModal
         isOpen={openFinishSolicitationModal}
         onClose={() => setOpenFinishSolicitationModal(false)}
-        mutateAsync={editSolicitationAsync}
+        mutateAsync={finishSolicitationAsync}
         callback={() => globalThis.location.reload()}
       />
 
