@@ -76,7 +76,7 @@ export async function downloadDocx(model: Solicitations) {
 
     // 1️⃣ Chama sua função fetcher com isFileDownload = true
     const blob = await fetcher<Blob>(
-      `/solicitation/document/generate-docx/${model.id}`,
+      `/solicitation/document/download/${model.id}`,
       { method: "GET" },
       false, // multipartFormData
       true // isFileDownload

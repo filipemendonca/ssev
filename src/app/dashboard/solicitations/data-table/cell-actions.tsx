@@ -20,6 +20,7 @@ import {
   DownloadIcon,
   EyeIcon,
   LockIcon,
+  Mail,
   UnlockIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -33,6 +34,7 @@ import {
   updateTextDialogByStatus,
 } from "../utils/utils";
 import { Solicitations } from "./columns";
+import { LoadingModal } from "@/components/modal/loading-modal";
 
 interface CellActionProps {
   model: Solicitations;
@@ -53,6 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     useState(false);
   const [openFinishSolicitationModal, setOpenFinishSolicitationModal] =
     useState(false);
+  const [openLoadingModal, setOpenLoadingModal] = useState(false);
   const router = useRouter();
   const { user } = useUserStore();
   const {
@@ -103,6 +106,16 @@ export const CellAction: React.FC<CellActionProps> = ({
     invalidateQueryKeys: ["solicitation"],
   });
 
+  const { mutateAsync: sendEmailAsync } = useApiMutation<
+    GenericResponse<{ emailSented: boolean }>
+  >({
+    endpoint: `/solicitation/document/send-report/${model?.id}`,
+    method: "POST",
+    queryKeys: ["sendEmail"],
+    invalidateQueries: true,
+    invalidateQueryKeys: ["solicitation"],
+  });
+
   const onConfirm = async () => {
     await deleteItemAsync(model.id as never);
     setOpen(false);
@@ -117,6 +130,12 @@ export const CellAction: React.FC<CellActionProps> = ({
 
   const onClickButton2GenericModal = () => {
     router.push(`solicitations/${model.id}/view`);
+  };
+
+  const handleSendEmail = async () => {
+    setOpenLoadingModal(true);
+    await sendEmailAsync(model as never);
+    setOpenLoadingModal(false);
   };
 
   const {
@@ -240,8 +259,29 @@ export const CellAction: React.FC<CellActionProps> = ({
     );
   };
 
+  const renderSendEmailButton = () => {
+    return model.status === SolicitationStatus.FINALIZADO ? (
+      <>
+        <Separator className="mt-2 mb-2" />
+        <DropdownMenuItem
+          onClick={() => handleSendEmail()}
+          className="cursor-pointer"
+        >
+          <Mail className="mr-2 h-4 w-4" /> Enviar email ao veterinário
+        </DropdownMenuItem>
+      </>
+    ) : (
+      <></>
+    );
+  };
+
   return (
     <>
+      <LoadingModal
+        isOpen={openLoadingModal}
+        onClose={() => setOpenLoadingModal(false)}
+        title="Enviando email..."
+      />
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -287,6 +327,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           {!enableFinishButton && renderChangeStatusButton()}
           {renderFinishButton()}
           {renderDownloadButton()}
+          {renderSendEmailButton()}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
