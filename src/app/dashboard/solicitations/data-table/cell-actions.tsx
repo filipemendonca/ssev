@@ -1,6 +1,7 @@
 "use client";
 import { AlertModal } from "@/components/modal/alert-modal";
 import { GenericModal } from "@/components/modal/generic-modal";
+import { LoadingModal } from "@/components/modal/loading-modal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,7 +35,6 @@ import {
   updateTextDialogByStatus,
 } from "../utils/utils";
 import { Solicitations } from "./columns";
-import { LoadingModal } from "@/components/modal/loading-modal";
 
 interface CellActionProps {
   model: Solicitations;

@@ -46,7 +46,7 @@ export const CellAction: React.FC<CellActionProps> = ({ model }) => {
         onConfirm={onConfirm}
         loading={loading}
         title="Tem certeza?"
-        description="Esta ação não pode ser desfeita. Você tem certeza que deseja remover este usuário?"
+        description="Esta ação não pode ser desfeita. Você tem certeza que deseja remover este template?"
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
