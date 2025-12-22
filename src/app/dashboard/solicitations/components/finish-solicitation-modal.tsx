@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { SolicitationStatus } from "../types/types";
+import { Spinner } from "@/components/ui/spinner";
 
 /*
 
@@ -93,6 +94,7 @@ export const FinishSolicitationModal: React.FC<
   FinishSolicitationModalProps
 > = ({ isOpen, onClose, mutateAsync, callback }) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FinishSolicitationModalForm>({
     resolver: zodResolver(formSchema),
@@ -112,11 +114,13 @@ export const FinishSolicitationModal: React.FC<
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
     values.status = SolicitationStatus.FINALIZADO;
     await mutateAsync(values as never);
     form.reset();
     onClose();
     callback?.();
+    setIsLoading(false);
   };
 
   return (
@@ -265,8 +269,12 @@ export const FinishSolicitationModal: React.FC<
               )}
             />
             <div className="flex w-full items-center justify-end space-x-2 pt-6">
-              <Button type="submit" className="cursor-pointer">
-                Continuar
+              <Button
+                type="submit"
+                className="cursor-pointer w-1/4"
+                disabled={isLoading}
+              >
+                {isLoading ? <Spinner className="size-5" /> : "Continuar"}
               </Button>
             </div>
           </form>
