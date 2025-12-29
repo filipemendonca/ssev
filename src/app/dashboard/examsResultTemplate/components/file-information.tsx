@@ -4,31 +4,27 @@ import { Download, File } from "lucide-react";
 
 interface FileInformationProps {
   fileName: string;
+  templateId?: string | null;
 }
 
-const FileInformation = ({ fileName }: FileInformationProps) => {
+const FileInformation = ({ fileName, templateId }: FileInformationProps) => {
   const downloadFile = async () => {
     try {
       const blob = await fetcher<Blob>(
-        `/examsResultTemplate/download/${fileName}`,
+        `/examsResultTemplate/download/${templateId}`,
         { method: "GET" },
         false, // multipartFormData
-        true // isFileDownload 👈
+        true // isFileDownload
       );
 
       // cria uma URL temporária para o blob
-      const url = window.URL.createObjectURL(blob);
+      const url = globalThis.URL.createObjectURL(blob);
 
       // cria um link e simula o clique
       const a = document.createElement("a");
       a.href = url;
       a.download = fileName;
-      document.body.appendChild(a);
       a.click();
-
-      // limpa recursos
-      a.remove();
-      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Erro ao baixar o arquivo:", error);
     }

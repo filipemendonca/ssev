@@ -1,8 +1,8 @@
 import { fetcher } from "@/utils/fetcher";
-import { SolicitationStatus } from "../types/types";
-import { Solicitations } from "../data-table/columns";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Solicitations } from "../data-table/columns";
+import { SolicitationStatus } from "../types/types";
 
 export const changeToNextStatus = (status: SolicitationStatus) => {
   switch (status) {
@@ -75,7 +75,7 @@ export async function downloadDocx(model: Solicitations) {
     const documentTitle = `solicitacao_${model.patient}_${dateTodayFormatted}.docx`;
 
     // 1️⃣ Chama sua função fetcher com isFileDownload = true
-    const blob = await fetcher<Blob>(
+    const data = await fetcher<Blob>(
       `/solicitation/document/download/${model.id}`,
       { method: "GET" },
       false, // multipartFormData
@@ -83,7 +83,7 @@ export async function downloadDocx(model: Solicitations) {
     );
 
     // 2️⃣ Cria URL temporária
-    const url = globalThis.URL.createObjectURL(blob);
+    const url = globalThis.URL.createObjectURL(data);
 
     // 3️⃣ Cria link temporário para download
     const a = document.createElement("a");

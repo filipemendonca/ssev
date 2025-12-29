@@ -140,6 +140,7 @@ export default function ExamsResultTemplateForm({
                       <FileUploader
                         {...field}
                         fileName={initialData?.fileName || null}
+                        templateId={initialData?.id || null}
                       />
                     </FormControl>
                     <FormMessage />

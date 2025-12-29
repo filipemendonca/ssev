@@ -9,6 +9,7 @@ import FileInformation from "./file-information";
 interface FileUploaderProps {
   value?: File | null;
   fileName: string | null;
+  templateId?: string | null;
   onChange?: (file: File | null) => void;
 }
 
@@ -16,6 +17,7 @@ export function FileUploader({
   value,
   onChange,
   fileName,
+  templateId,
 }: Readonly<FileUploaderProps>) {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -46,7 +48,7 @@ export function FileUploader({
   };
 
   return fileName ? (
-    <FileInformation fileName={fileName} />
+    <FileInformation fileName={fileName} templateId={templateId} />
   ) : (
     <div className="flex flex-col gap-4 w-full p-4 border rounded-xl shadow-sm bg-white">
       {value ? (
