@@ -466,6 +466,7 @@ export default function SolicitationsForm({
                       <FormControl>
                         <Input
                           type="number"
+                          min="0"
                           placeholder="Insira a idade do animal."
                           {...field}
                         />
