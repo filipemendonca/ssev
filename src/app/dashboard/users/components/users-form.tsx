@@ -149,6 +149,7 @@ export default function UsersForm({
                     <FormLabel>Ativo</FormLabel>
                     <FormControl>
                       <Switch
+                        className="cursor-pointer"
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />

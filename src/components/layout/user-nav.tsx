@@ -11,7 +11,9 @@ import { useLogout } from "@/hooks/use-login";
 import { Separator } from "../ui/separator";
 import { UserAvatarProfile } from "../user-avatar-profile";
 import { useUserStore } from "@/context/stores/user.store";
+import { useRouter } from "next/navigation";
 export function UserNav() {
+  const router = useRouter();
   const { mutateAsync: handleLogout } = useLogout();
   const { user, clearUser } = useUserStore();
 
@@ -43,16 +45,13 @@ export function UserNav() {
             </div>
           </DropdownMenuLabel>
           <Separator className="mb-1" />
-          {/* <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator /> */}
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => router.push("/dashboard/profile")}
+          >
+            <DropdownMenuItem>Perfíl</DropdownMenuItem>
+          </DropdownMenuItem>
+          <Separator className="mb-1 mt-1" />
           <DropdownMenuItem className="cursor-pointer" onClick={onLogout}>
             <DropdownMenuItem>Sair</DropdownMenuItem>
           </DropdownMenuItem>
