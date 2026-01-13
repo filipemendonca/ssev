@@ -98,7 +98,7 @@ export default function ProfileForm({
   const { mutateAsync: editProfileAsync } = useApiMutation<
     GenericResponse<Users>
   >({
-    endpoint: `/users/profile/${initialData?.id}`,
+    endpoint: `/profile/${initialData?.id}`,
     method: "PATCH",
     queryKeys: ["editProfile"],
     invalidateQueries: true,

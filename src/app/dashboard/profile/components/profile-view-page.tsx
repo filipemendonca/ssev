@@ -7,7 +7,7 @@ import ProfileForm from "./profile-form";
 export default function ProfileViewPage() {
   const { data } = useApiQuery<GenericResponse<Profile>>(
     ["getProfile"],
-    `/users/profile`
+    `/profile`
   );
 
   const users = data?.data;
