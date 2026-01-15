@@ -22,7 +22,7 @@ export default function NotFound() {
       </p>
       <div className="mt-8 flex justify-center gap-2">
         <Button
-          onClick={() => router.push("/dashboard")}
+          onClick={() => router.push("/sign-in")}
           variant="default"
           size="lg"
         >
