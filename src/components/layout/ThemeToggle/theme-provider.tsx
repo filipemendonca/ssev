@@ -9,5 +9,9 @@ export default function ThemeProvider({
   children,
   ...props
 }: Readonly<ThemeProviderProps>) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+  return (
+    <NextThemesProvider {...props} defaultTheme="light">
+      {children}
+    </NextThemesProvider>
+  );
 }

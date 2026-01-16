@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useMemo } from "react";
 
 const DEFAULT_THEME = "green";
 
@@ -15,10 +15,10 @@ export function ActiveThemeProvider({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  const value = useMemo(() => ({ theme: DEFAULT_THEME }), []);
+
   return (
-    <ThemeContext.Provider value={{ theme: DEFAULT_THEME }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 
