@@ -10,13 +10,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
-import { GenericResponse } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UseMutateAsyncFunction } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { Solicitations } from "../data-table/columns";
 import {
   Select,
   SelectContent,
@@ -24,9 +17,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { SolicitationStatus } from "../types/types";
 import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
+import { GenericResponse } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UseMutateAsyncFunction } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { Solicitations } from "../data-table/columns";
 
 /*
 
@@ -115,7 +114,6 @@ export const FinishSolicitationModal: React.FC<
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    values.status = SolicitationStatus.FINALIZADO;
     await mutateAsync(values as never);
     form.reset();
     onClose();

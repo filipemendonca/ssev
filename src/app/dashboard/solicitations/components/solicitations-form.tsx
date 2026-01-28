@@ -90,17 +90,17 @@ const formSchema = z.object({
   samples: z.array(
     z.string().min(1, {
       message: "Escolha ao menos uma amostra.",
-    })
+    }),
   ),
   exams: z.array(
     z.string().min(1, {
       message: "Escolha ao menos um exame.",
-    })
+    }),
   ),
   infectiousAgents: z.array(
     z.string().min(1, {
       message: "Escolha ao menos um agente infeccioso.",
-    })
+    }),
   ),
   gender: z.enum(Object.values(GENDER) as [string, ...string[]], {
     message: "Selecione o gênero.",
@@ -109,12 +109,12 @@ const formSchema = z.object({
     Object.values(ExamResultType) as [string, ...string[]],
     {
       message: "Selecione o tipo do exame.",
-    }
+    },
   ),
   bloodCollectionTubeColor: z.array(
     z.string().min(1, {
       message: "Escolha ao menos uma cor do tubo de coleta de sangue.",
-    })
+    }),
   ),
 });
 
@@ -135,13 +135,13 @@ export default function SolicitationsForm({
   const { user } = useUserStore();
   const { enableChangeStatus } = useConfigureButtonToSolicitations(
     initialData ? initialData.status : SolicitationStatus.CRIADO,
-    user ? user.role : null
+    user ? user.role : null,
   );
   const [sampleCheckboxes, setSampleCheckboxes] = useState<SampleWithCheck[]>(
-    initialData?.samples as []
+    initialData?.samples as [],
   );
   const [examsCheckboxes, setExamsCheckboxes] = useState<ExamsWithCheck[]>(
-    initialData?.exams as []
+    initialData?.exams as [],
   );
   const [infectiousAgentsCheckboxes, setInfectiousAgentsCheckboxes] = useState<
     InfectiousAgentsWithCheck[]
@@ -184,31 +184,31 @@ export default function SolicitationsForm({
     (
       sampleData: GenericResponse<Sample[]>,
       examsData: GenericResponse<Exams[]>,
-      infectiouAgentsData: GenericResponse<InfectiousAgents[]>
+      infectiouAgentsData: GenericResponse<InfectiousAgents[]>,
     ) => {
       setSampleCheckboxes(
         sampleData?.data?.map((item) =>
           initialData?.samples.includes(item.id)
             ? { ...item, checked: true }
-            : { ...item, checked: false }
-        )
+            : { ...item, checked: false },
+        ),
       );
       setExamsCheckboxes(
         examsData?.data?.map((item) =>
           initialData?.exams.includes(item.id)
             ? { ...item, checked: true }
-            : { ...item, checked: false }
-        )
+            : { ...item, checked: false },
+        ),
       );
       setInfectiousAgentsCheckboxes(
         infectiouAgentsData?.data?.map((item) =>
           initialData?.infectiousAgents.includes(item.id)
             ? { ...item, checked: true }
-            : { ...item, checked: false }
-        )
+            : { ...item, checked: false },
+        ),
       );
     },
-    [initialData?.exams, initialData?.infectiousAgents, initialData?.samples]
+    [initialData?.exams, initialData?.infectiousAgents, initialData?.samples],
   );
 
   const populateBloodCollectionTubeColorCheckboxes = useCallback(() => {
@@ -216,15 +216,15 @@ export default function SolicitationsForm({
       prev.map((bctc) =>
         initialData?.bloodCollectionTubeColor.includes(bctc.id)
           ? { ...bctc, checked: true }
-          : { ...bctc, checked: false }
-      )
+          : { ...bctc, checked: false },
+      ),
     );
   }, [initialData?.bloodCollectionTubeColor]);
 
   const fetchDropdownItemsData = useCallback(async () => {
     const [infectiouAgentsData, examsData, sampleData] = await Promise.all([
       fetcher<GenericResponse<InfectiousAgents[]>>(
-        "/infectious-agents?limit=1000&currentPage=1"
+        "/infectious-agents?limit=1000&currentPage=1",
       ),
       fetcher<GenericResponse<Exams[]>>("/exams?limit=1000&currentPage=1"),
       fetcher<GenericResponse<Sample[]>>("/sample?limit=1000&currentPage=1"),
@@ -253,19 +253,19 @@ export default function SolicitationsForm({
 
   const toggleCheck = (id: string, value: boolean) => {
     setSampleCheckboxes((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, checked: value } : s))
+      prev.map((s) => (s.id === id ? { ...s, checked: value } : s)),
     );
 
     setExamsCheckboxes((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, checked: value } : s))
+      prev.map((s) => (s.id === id ? { ...s, checked: value } : s)),
     );
 
     setInfectiousAgentsCheckboxes((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, checked: value } : s))
+      prev.map((s) => (s.id === id ? { ...s, checked: value } : s)),
     );
 
     setBloodCollectionTubeColorCheckboxes((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, checked: value } : s))
+      prev.map((s) => (s.id === id ? { ...s, checked: value } : s)),
     );
   };
 
@@ -308,7 +308,7 @@ export default function SolicitationsForm({
         .filter((i) => i.checked)
         .map((i) => i.id),
       examResultType: Object.entries(ExamResultType).find(
-        ([, val]) => val === values.examResultType
+        ([, val]) => val === values.examResultType,
       )?.[0],
       bloodCollectionTubeColor: bloodCollectionTubeColorCheckboxes
         .filter((s) => s.checked)
@@ -465,8 +465,6 @@ export default function SolicitationsForm({
                       <FormLabel>Idade</FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
-                          min="0"
                           placeholder="Insira a idade do animal."
                           {...field}
                         />
@@ -575,37 +573,6 @@ export default function SolicitationsForm({
                     </FormItem>
                   )}
                 />
-
-                {/* <FormField
-                control={form.control}
-                name="bloodCollectionTubeColor"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tubo de coleta de sangue</FormLabel>
-                    <Select
-                      disabled={isView}
-                      onValueChange={(value) => field.onChange(value)}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-2/3">
-                          <SelectValue placeholder="Selecione..." />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {Object.values(BLOOD_COLLECTION_TUBE_COLOR).map(
-                          (item) => (
-                            <SelectItem key={item} value={item}>
-                              {item}
-                            </SelectItem>
-                          )
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
               </div>
 
               <Card className="mx-auto w-full">
@@ -666,7 +633,9 @@ export default function SolicitationsForm({
 
               <Card className="mx-auto w-full">
                 <CardHeader>
-                  <CardTitle className="text-left text-md">Exames</CardTitle>
+                  <CardTitle className="text-left text-md">
+                    Outros exames
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -725,7 +694,7 @@ export default function SolicitationsForm({
                 href="/dashboard/solicitations"
                 className={cn(
                   buttonVariants({ variant: "secondary" }),
-                  "text-xs md:text-sm cursor-pointer mr-2"
+                  "text-xs md:text-sm cursor-pointer mr-2",
                 )}
               >
                 <IconArrowLeft /> Voltar
