@@ -13,10 +13,10 @@ const translations: Record<string, string> = {
   doctor: "Veterinário",
   hospitalVet: "Hospital Veterinário",
   age: "Idade",
-  createdAt: "Criado em",
-  updatedAt: "Atualizado em",
-  finishedAt: "Finalizado em",
-  canceledAt: "Cancelado em",
+  createdAt: "Data de criação da solicitação",
+  updatedAt: "Data de atualização da solicitação",
+  finishedAt: "Data de finalização da solicitação",
+  canceledAt: "Data de cancelamento da solicitação",
   status: "Status",
   specie: "Espécie",
   samples: "Amostras",
@@ -28,7 +28,7 @@ const translations: Record<string, string> = {
   solicitationColectTypeConclusion: "Tipo de Coleta da Solicitação (Conslusão)",
   solicitationConclusionText: "Texto de Conclusão da Solicitação",
   solicitationResult: "Resultado da Solicitação",
-  solicitationSampleConclusion: "Conclusão da Amostra da Solicitação",
+  solicitationSampleConclusion: "Material usado na coleta",
   solicitationSampleQuality: "Qualidade da Amostra da Solicitação",
 };
 
