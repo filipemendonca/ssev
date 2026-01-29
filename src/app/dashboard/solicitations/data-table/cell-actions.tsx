@@ -31,7 +31,7 @@ import { FinishSolicitationModal } from "../components/finish-solicitation-modal
 import { SolicitationStatus } from "../types/types";
 import {
   changeToNextStatus,
-  downloadDocx,
+  downloadDocument,
   updateTextDialogByStatus,
 } from "../utils/utils";
 import { Solicitations } from "./columns";
@@ -248,7 +248,7 @@ export const CellAction: React.FC<CellActionProps> = ({
       <>
         <Separator className="mt-2 mb-2" />
         <DropdownMenuItem
-          onClick={() => downloadDocx(model)}
+          onClick={() => downloadDocument(model)}
           className="cursor-pointer"
         >
           <DownloadIcon className="mr-2 h-4 w-4" /> Baixar laudo

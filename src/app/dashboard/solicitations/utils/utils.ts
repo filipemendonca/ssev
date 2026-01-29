@@ -1,6 +1,4 @@
 import { fetcher } from "@/utils/fetcher";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { Solicitations } from "../data-table/columns";
 import { SolicitationStatus } from "../types/types";
 
@@ -20,7 +18,7 @@ export const changeToNextStatus = (status: SolicitationStatus) => {
 };
 
 export const updateTextDialogByStatus = (
-  status: SolicitationStatus | undefined
+  status: SolicitationStatus | undefined,
 ) => {
   let solicitationStatusChangeText: string | undefined = "";
   const alertDialogChangeStatusTitle = "Despachar essa solicitação?";
@@ -69,38 +67,18 @@ export const updateTextDialogByStatus = (
   };
 };
 
-export async function downloadDocx(model: Solicitations) {
+export async function downloadDocument(model: Solicitations) {
   try {
-    const dateTodayFormatted = format(Date.now(), "ddMMyyyy", { locale: ptBR });
-    const documentTitle = `solicitacao_${model.patient}_${dateTodayFormatted}.docx`;
-
     // 1️⃣ Chama sua função fetcher com isFileDownload = true
     const data = await fetcher<Blob>(
       `/solicitation/document/download/${model.id}`,
       { method: "GET" },
       false, // multipartFormData
-      true // isFileDownload
+      true, // isFileDownload
     );
-
-    // 2️⃣ Cria URL temporária
     const url = globalThis.URL.createObjectURL(data);
 
-    // 3️⃣ Cria link temporário para download
-    const a = document.createElement("a");
-    a.href = url;
-
-    // 4️⃣ Tenta pegar nome do arquivo via header (não disponível no fetcher)
-    // ❗ Como fetcher não retorna headers, usamos nome padrão
-    a.download = documentTitle;
-
-    document.body.appendChild(a);
-
-    // 5️⃣ Força o download
-    a.click();
-
-    // 6️⃣ Limpa
-    a.remove();
-    globalThis.URL.revokeObjectURL(url);
+    window.open(url, "_blank");
   } catch (error) {
     console.error("Erro ao baixar documento:", error);
   }
