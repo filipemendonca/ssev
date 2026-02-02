@@ -7,16 +7,19 @@ interface LoadingModalProps {
   onClose: () => void;
   title?: string;
   description?: string;
+  showCloseButton?: boolean;
 }
 
 export const LoadingModal: React.FC<LoadingModalProps> = ({
   isOpen,
   onClose,
+  showCloseButton,
   title = "",
   description = "",
 }) => {
   return (
     <Modal
+      showCloseButton={showCloseButton}
       title={title}
       description={description}
       isOpen={isOpen}

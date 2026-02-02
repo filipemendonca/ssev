@@ -26,18 +26,6 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { Solicitations } from "../data-table/columns";
 
-/*
-
-Campos necessários:
-
-Material: Provavelmente caixa de texto
-Tipo de coleta: Dropdown
-Qualidade das amostras: Dropdown (satisfatória, insatisfatória)
-Avaliação clínica: Provavelmete caixa de texto
-Conclusão: Provavelmente caixa de texto
-
- */
-
 enum CollectType {
   NI = "Não informado",
   TESTE1 = "Teste 1",

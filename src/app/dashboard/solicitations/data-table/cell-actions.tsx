@@ -138,6 +138,12 @@ export const CellAction: React.FC<CellActionProps> = ({
     setOpenLoadingModal(false);
   };
 
+  const handleDownloadDocument = async () => {
+    setOpenLoadingModal(true);
+    await downloadDocument(model);
+    setOpenLoadingModal(false);
+  };
+
   const {
     title,
     description,
@@ -248,7 +254,7 @@ export const CellAction: React.FC<CellActionProps> = ({
       <>
         <Separator className="mt-2 mb-2" />
         <DropdownMenuItem
-          onClick={() => downloadDocument(model)}
+          onClick={() => handleDownloadDocument()}
           className="cursor-pointer"
         >
           <DownloadIcon className="mr-2 h-4 w-4" /> Baixar laudo
@@ -280,7 +286,8 @@ export const CellAction: React.FC<CellActionProps> = ({
       <LoadingModal
         isOpen={openLoadingModal}
         onClose={() => setOpenLoadingModal(false)}
-        title="Enviando email..."
+        showCloseButton={false}
+        title="Processando..."
       />
       <AlertModal
         isOpen={open}
