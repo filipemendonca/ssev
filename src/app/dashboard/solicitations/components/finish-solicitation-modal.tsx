@@ -8,7 +8,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import {
   Select,
@@ -40,6 +39,7 @@ Conclusão: Provavelmente caixa de texto
  */
 
 enum CollectType {
+  NI = "Não informado",
   TESTE1 = "Teste 1",
   TESTE2 = "Teste 2",
 }
@@ -68,9 +68,6 @@ interface FinishSolicitationModalProps {
 }
 
 const formSchema = z.object({
-  solicitationSampleConclusion: z
-    .string()
-    .min(1, "O campo Material é obrigatório."),
   solicitationColectTypeConclusion: z
     .string()
     .min(1, "Selecione o tipo de coleta."),
@@ -80,9 +77,6 @@ const formSchema = z.object({
   solicitationClinicAvaliation: z
     .string()
     .min(1, "Informe a avaliação clínica."),
-  solicitationConclusionText: z
-    .string()
-    .min(1, "É necessário preencher a conclusão."),
   solicitationResult: z.string().min(1, "Informe o resultado."),
   status: z.string().optional(),
 });
@@ -98,9 +92,10 @@ export const FinishSolicitationModal: React.FC<
   const form = useForm<FinishSolicitationModalForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      solicitationSampleConclusion: "",
-      solicitationConclusionText: "",
       solicitationClinicAvaliation: "",
+      solicitationColectTypeConclusion: "",
+      solicitationSampleQuality: "",
+      solicitationResult: "",
     },
   });
 
@@ -162,7 +157,7 @@ export const FinishSolicitationModal: React.FC<
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="solicitationSampleConclusion"
               render={({ field }) => (
@@ -177,7 +172,7 @@ export const FinishSolicitationModal: React.FC<
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="solicitationColectTypeConclusion"
@@ -249,7 +244,7 @@ export const FinishSolicitationModal: React.FC<
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="solicitationConclusionText"
               render={({ field }) => (
@@ -265,7 +260,7 @@ export const FinishSolicitationModal: React.FC<
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <div className="flex w-full items-center justify-end space-x-2 pt-6">
               <Button
                 type="submit"
