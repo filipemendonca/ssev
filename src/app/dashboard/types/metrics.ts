@@ -15,19 +15,29 @@ export type SolicitationStatusMetrics = {
 };
 
 export type ExamsInfectiousMetricItem = {
+  examId: string;
   name: string;
-  openCount: number;
-  closedCount: number;
-  openPercent: number;
-  closedPercent: number;
-  total: number;
+  currentCount: number;
+  previousCount: number;
+  growthPercent: number;
+  trend: "crescimento" | "decrescimento" | "estavel";
 };
 
 export type ExamsInfectiousMetrics = {
   range: {
-    from: string | null;
-    to: string | null;
+    current: {
+      from: string;
+      to: string;
+    };
+    previous: {
+      from: string;
+      to: string;
+    };
+  };
+  totals: {
+    currentCount: number;
+    previousCount: number;
+    growthPercent: number;
   };
   exams: ExamsInfectiousMetricItem[];
-  infectiousAgents: ExamsInfectiousMetricItem[];
 };

@@ -21,7 +21,7 @@ export const LatestInProgressCards = memo(function LatestInProgressCards({
 }: LatestInProgressCardsProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mb-10">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {["skeleton-1", "skeleton-2", "skeleton-3", "skeleton-4"].map((key) => (
           <Card key={key} className="h-full">
             <CardHeader className="space-y-2">
@@ -48,7 +48,7 @@ export const LatestInProgressCards = memo(function LatestInProgressCards({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 mb-10">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {items.map((solicitation) => (
         <Link
           key={solicitation.id}

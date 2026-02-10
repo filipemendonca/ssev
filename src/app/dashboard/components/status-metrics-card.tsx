@@ -2,6 +2,7 @@
 
 import { memo, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DateRange } from "@/components/ui/date-range-picker";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Bar,
@@ -15,6 +16,7 @@ import {
 } from "recharts";
 import { recordStatus } from "../solicitations/types/types";
 import { SolicitationStatusMetrics } from "../types/metrics";
+import { MetricsDateFilter } from "./metrics-date-filter";
 
 const STATUS_CHART_COLOR: Record<string, string> = {
   CRIADO: "#2563eb",
@@ -29,11 +31,15 @@ const STATUS_CHART_COLOR: Record<string, string> = {
 type StatusMetricsCardProps = {
   isLoading: boolean;
   metrics: SolicitationStatusMetrics | null | undefined;
+  metricsDateRange: DateRange;
+  onDateRangeChange: (range: DateRange) => void;
 };
 
 export const StatusMetricsCard = memo(function StatusMetricsCard({
   isLoading,
   metrics,
+  metricsDateRange,
+  onDateRangeChange,
 }: StatusMetricsCardProps) {
   const statusChartData = useMemo(() => {
     const items = metrics?.items ?? [];
@@ -85,9 +91,15 @@ export const StatusMetricsCard = memo(function StatusMetricsCard({
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">
-          Solicitações por status
-        </CardTitle>
+        <div className="flex items-start justify-between gap-3">
+          <CardTitle className="text-lg font-semibold">
+            Solicitações por status
+          </CardTitle>
+          <MetricsDateFilter
+            metricsDateRange={metricsDateRange}
+            onDateRangeChange={onDateRangeChange}
+          />
+        </div>
         {isLoading ? (
           <Skeleton className="h-4 w-40" />
         ) : (
