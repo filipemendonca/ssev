@@ -21,7 +21,6 @@ import {
   DownloadIcon,
   EyeIcon,
   LockIcon,
-  Mail,
   UnlockIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -106,15 +105,15 @@ export const CellAction: React.FC<CellActionProps> = ({
     invalidateQueryKeys: ["solicitation"],
   });
 
-  const { mutateAsync: sendEmailAsync } = useApiMutation<
-    GenericResponse<{ emailSented: boolean }>
-  >({
-    endpoint: `/solicitation/document/send-report/${model?.id}`,
-    method: "POST",
-    queryKeys: ["sendEmail"],
-    invalidateQueries: true,
-    invalidateQueryKeys: ["solicitation"],
-  });
+  // const { mutateAsync: sendEmailAsync } = useApiMutation<
+  //   GenericResponse<{ emailSented: boolean }>
+  // >({
+  //   endpoint: `/solicitation/document/send-report/${model?.id}`,
+  //   method: "POST",
+  //   queryKeys: ["sendEmail"],
+  //   invalidateQueries: true,
+  //   invalidateQueryKeys: ["solicitation"],
+  // });
 
   const onConfirm = async () => {
     await deleteItemAsync(model.id as never);
@@ -132,11 +131,11 @@ export const CellAction: React.FC<CellActionProps> = ({
     router.push(`solicitations/${model.id}/view`);
   };
 
-  const handleSendEmail = async () => {
-    setOpenLoadingModal(true);
-    await sendEmailAsync(model as never);
-    setOpenLoadingModal(false);
-  };
+  // const handleSendEmail = async () => {
+  //   setOpenLoadingModal(true);
+  //   await sendEmailAsync(model as never);
+  //   setOpenLoadingModal(false);
+  // };
 
   const handleDownloadDocument = async () => {
     setOpenLoadingModal(true);
@@ -265,21 +264,21 @@ export const CellAction: React.FC<CellActionProps> = ({
     );
   };
 
-  const renderSendEmailButton = () => {
-    return model.status === SolicitationStatus.FINALIZADO ? (
-      <>
-        <Separator className="mt-2 mb-2" />
-        <DropdownMenuItem
-          onClick={() => handleSendEmail()}
-          className="cursor-pointer"
-        >
-          <Mail className="mr-2 h-4 w-4" /> Enviar email ao veterinário
-        </DropdownMenuItem>
-      </>
-    ) : (
-      <></>
-    );
-  };
+  // const renderSendEmailButton = () => {
+  //   return model.status === SolicitationStatus.FINALIZADO ? (
+  //     <>
+  //       <Separator className="mt-2 mb-2" />
+  //       <DropdownMenuItem
+  //         onClick={() => handleSendEmail()}
+  //         className="cursor-pointer"
+  //       >
+  //         <Mail className="mr-2 h-4 w-4" /> Enviar email ao veterinário
+  //       </DropdownMenuItem>
+  //     </>
+  //   ) : (
+  //     <></>
+  //   );
+  // };
 
   return (
     <>
