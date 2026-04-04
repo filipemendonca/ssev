@@ -334,7 +334,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           {!enableFinishButton && renderChangeStatusButton()}
           {renderFinishButton()}
           {renderDownloadButton()}
-          {renderSendEmailButton()}
+          {/* {renderSendEmailButton()} */}
         </DropdownMenuContent>
       </DropdownMenu>
     </>
